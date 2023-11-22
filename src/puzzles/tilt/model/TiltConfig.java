@@ -12,19 +12,19 @@ public class TiltConfig implements Configuration {
     private List<Configuration> neighbors;
     private char[][] board;
     private char[][] original;
-    private int bCount;
+    private int blueCount;
 
     //private Map<Coordinates, String> board;
-    public TiltConfig(int dimensions, char[][] board) {
+    public TiltConfig(int dimensions, char[][] board, int blueCount) {
+        this.blueCount = blueCount;
         neighbors = new ArrayList<>();
         this.DIM = dimensions;
+        original = new char[DIM][DIM];
         this.board = new char[dimensions][dimensions];
         for (int row = 0; row < this.DIM; row++) {
             for(int col = 0; col < this.DIM; col++){
                 this.board[row][col] = board[row][col];
-                if(this.board[row][col] == 'B'){
-                    bCount++;
-                }
+                original[row][col] = board[row][col];
             }
         }
     }
@@ -42,7 +42,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(count!=this.bCount){
+        if(count!=this.blueCount){
             return false;
         }
         return true;
@@ -50,12 +50,8 @@ public class TiltConfig implements Configuration {
 
     @Override
     public Collection<Configuration> getNeighbors() {
-        original = new char[DIM][DIM];
         int rows;
         int cols;
-        for (int row = 0; row < DIM; row++) {
-            System.arraycopy(this.board[row], 0, original[row], 0, DIM);
-        }
         for(int r = 1; r<DIM; r++){
             for(int c = 0; c < DIM; c++){
                 rows = r;
@@ -65,11 +61,8 @@ public class TiltConfig implements Configuration {
                     while(rows-1 >= 0 && board[rows-1][cols] == '.' ){
                         rows--;
                     }
-                    if(this.board[rows][cols] == 'O'){
-                        if(this.board[r][c] == 'G'){
-                            this.board[r][c] = '.';
-                            neighbors.add(new TiltConfig(DIM, this.board));
-                        }
+                    if (rows-1 >= 0&& this.board[rows - 1][cols] == 'O') { // the slider fell into the hole
+                        this.board[r][c] = '.';
                     }
                     else if(r!=rows){
                         this.board[r][c] = '.';
@@ -78,8 +71,10 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board));
-        this.board = original;
+        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        for (int row = 0; row<DIM; row++){
+            System.arraycopy(original[row],0,this.board[row],0,DIM);
+        }
         for(int c = DIM-2; c >= 0 ; c--){
             for(int r = 0; r < DIM ; r++){
                 rows = r;
@@ -89,22 +84,21 @@ public class TiltConfig implements Configuration {
                     while(cols+1 < DIM && board[rows][cols+1] == '.' ){
                         cols++;
                     }
-                    if(this.board[rows][cols] == 'O'){
-                        if(this.board[r][c] == 'G'){
-                            this.board[r][c] = '.';
-                            neighbors.add(new TiltConfig(DIM, this.board));
-                        }
+                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
+                        this.board[r][c] = '.';
                     }
                     else if(c!=cols){
                         this.board[r][c] = '.';
-                        this.board[rows][c] = marker;
+                        this.board[r][cols] = marker;
                     }
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board));
-        this.board = original;
-        for(int r = DIM-1; r>=0; r--){
+        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        for (int row = 0; row<DIM; row++){
+            System.arraycopy(original[row],0,this.board[row],0,DIM);
+        }
+        for(int r = DIM-2; r>=0; r--){
             for(int c = 0; c < DIM; c++){
                 rows = r;
                 cols = c;
@@ -113,11 +107,11 @@ public class TiltConfig implements Configuration {
                     while(rows+1 < DIM && board[rows+1][cols] == '.' ){
                         rows++;
                     }
-                    if(this.board[rows][cols] == 'O'){
-                        if(this.board[r][c] == 'G'){
-                            this.board[r][c] = '.';
-                            neighbors.add(new TiltConfig(DIM, this.board));
-                        }
+                    if (rows+1<DIM && this.board[rows + 1][cols] == 'O') {
+                        //if(this.board[r][c] == 'G'){
+                        this.board[r][c] = '.';
+                        //    neighbors.add(new TiltConfig(DIM, this.board));
+                        //}
                     }
                     else if(r!=rows){
                         this.board[r][c] = '.';
@@ -126,19 +120,55 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board));
-        this.board = original;
+        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        for (int row = 0; row<DIM; row++){
+            System.arraycopy(original[row],0,this.board[row],0,DIM);
+        }
+        for(int c = 1; c<DIM; c++){
+            for(int r = 0; r < DIM; r++){
+                rows = r;
+                cols = c;
+                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // left option
+                    char marker = this.board[r][c];
+                    while(cols-1 >= 0 && board[rows][cols-1] == '.' ){
+                        cols--;
+                    }
+                    if (cols-1 >= 0 && this.board[rows][cols-1] == 'O') {
+                        this.board[r][c] = '.';
+                    }
+                    else if(c!=cols){
+                        this.board[r][c] = '.';
+                        this.board[r][cols] = marker;
+                    }
+                }
+            }
+        }
+        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        for (int row = 0; row<DIM; row++){
+            System.arraycopy(original[row],0,this.board[row],0,DIM);
+        }
         return neighbors;
     }
 
     @Override
     public boolean equals(Object other) {
-        return false;
+        if (other instanceof TiltConfig){
+            TiltConfig config = (TiltConfig) other;
+            for(int r = 0; r<DIM; r++){
+                for(int c = 0; c<DIM; c++){
+                    if(this.board[r][c] != config.board[r][c]){
+                        return false;
+                    }
+                }
+            }
+//            return this.board == config.board;
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return Arrays.deepHashCode(board);
     }
 
     @Override
@@ -152,7 +182,6 @@ public class TiltConfig implements Configuration {
                 result += this.board[row][col] + " ";
             }
         }
-        getNeighbors();
         return result;
     }
 }

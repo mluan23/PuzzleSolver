@@ -46,7 +46,7 @@ public class Solver {
                 }
             }
         }
-        if (toVisit.isEmpty()) {
+        if (toVisit.isEmpty() && !start.isSolution()) {
             return null;
         } else {
             List<Configuration> path = new LinkedList<>();
