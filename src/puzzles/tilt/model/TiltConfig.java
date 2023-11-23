@@ -142,7 +142,6 @@ public class TiltConfig implements Configuration {
         }
         return neighbors;
     }
-
     @Override
     public boolean equals(Object other) {
         if (other instanceof TiltConfig){

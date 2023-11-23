@@ -14,24 +14,30 @@ public class Tilt {
     private List<Configuration> path;
     private TiltConfig con;
     private Solver solver;
-    public Tilt(){
+
+    public Tilt() {
         path = new ArrayList<>();
         solver = new Solver();
     }
-    public char[][] getBoard(){
+
+    public char[][] getBoard() {
         return con.getBoard();
     }
-    public List<Configuration> solveConfig(TiltConfig current){
+    public TiltConfig getConfig(){
+        return this.con;
+    }
+
+    public List<Configuration> solveConfig(TiltConfig current) {
         this.con = current;
-        try{
+        try {
             path.addAll(solver.solve(current));
-        }
-        catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
             return null;
         }
         return path;
     }
-    public TiltConfig readFile(String filename) throws IOException{
+
+    public TiltConfig readFile(String filename) throws IOException {
         try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
             int blueCount = 0;
             int r = 0;
@@ -52,11 +58,11 @@ public class Tilt {
             return new TiltConfig(dimensions, board, blueCount);
         }
     }
+
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.out.println("Usage: java Tilt filename");
-        }
-        else {
+        } else {
             Tilt t = new Tilt();
             TiltConfig con = t.readFile(args[0]);
             int num = 0;
@@ -66,16 +72,16 @@ public class Tilt {
                 System.out.println("Total configs: " + t.solver.getTotal());
                 System.out.println("Unique configs: " + t.solver.getUnique());
                 System.out.println("No solution");
-                System.exit(0);
-            }
-            System.out.println("Total configs: " + t.solver.getTotal());
-            System.out.println("Unique configs: " + t.solver.getUnique());
-            if (t.path.get(0) == null) {
-                System.out.println("Step " + num + ": \n" + con);
             } else {
-                for (Configuration steps : t.path) {
-                    System.out.println("Step " + num + ": \n" + steps + "\n");
-                    num++;
+                System.out.println("Total configs: " + t.solver.getTotal());
+                System.out.println("Unique configs: " + t.solver.getUnique());
+                if (t.path.get(0) == null) {
+                    System.out.println("Step " + num + ": \n" + con);
+                } else {
+                    for (Configuration steps : t.path) {
+                        System.out.println("Step " + num + ": \n" + steps + "\n");
+                        num++;
+                    }
                 }
             }
         }
