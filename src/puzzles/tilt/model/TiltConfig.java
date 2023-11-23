@@ -59,7 +59,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount) {
+        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
             neighbors.add(new TiltConfig(DIM, this.board, blueCount));
         }
         for (int row = 0; row<DIM; row++){
@@ -74,7 +74,7 @@ public class TiltConfig implements Configuration {
                     while(cols+1 < DIM && board[rows][cols+1] == '.' ){
                         cols++;
                     }
-                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O' && this.board[r][c] == 'G') {
+                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
                         this.board[r][c] = '.';
                     }
                     else if(c!=cols){
@@ -84,7 +84,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount) {
+        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
             neighbors.add(new TiltConfig(DIM, this.board, blueCount));
         }
         for (int row = 0; row<DIM; row++){
@@ -109,7 +109,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount) {
+        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
             neighbors.add(new TiltConfig(DIM, this.board, blueCount));
         }
         for (int row = 0; row<DIM; row++){
@@ -134,7 +134,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount) {
+        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
             neighbors.add(new TiltConfig(DIM, this.board, blueCount));
         }
         for (int row = 0; row<DIM; row++){
