@@ -1,10 +1,6 @@
 package puzzles.tilt.model;
 
-// TODO: implement your TiltConfig for the common solver
-
-import puzzles.common.Coordinates;
 import puzzles.common.solver.Configuration;
-
 import java.util.*;
 
 public class TiltConfig implements Configuration {
@@ -14,7 +10,6 @@ public class TiltConfig implements Configuration {
     private char[][] original;
     private int blueCount;
 
-    //private Map<Coordinates, String> board;
     public TiltConfig(int dimensions, char[][] board, int blueCount) {
         this.blueCount = blueCount;
         neighbors = new ArrayList<>();
@@ -31,19 +26,12 @@ public class TiltConfig implements Configuration {
 
     @Override
     public boolean isSolution() {
-        int count = 0;
         for (int row = 0; row < this.DIM; row++) {
             for (int col = 0; col < this.DIM; col++) {
                 if(this.board[row][col] == 'G'){
                     return false;
                 }
-                if(this.board[row][col] == 'B'){
-                    count++;
-                }
             }
-        }
-        if(count!=this.blueCount){
-            return false;
         }
         return true;
     }
@@ -71,7 +59,9 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        if(countBlue()==blueCount) {
+            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        }
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
@@ -84,7 +74,7 @@ public class TiltConfig implements Configuration {
                     while(cols+1 < DIM && board[rows][cols+1] == '.' ){
                         cols++;
                     }
-                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
+                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O' && this.board[r][c] == 'G') {
                         this.board[r][c] = '.';
                     }
                     else if(c!=cols){
@@ -94,7 +84,9 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        if(countBlue()==blueCount) {
+            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        }
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
@@ -108,10 +100,7 @@ public class TiltConfig implements Configuration {
                         rows++;
                     }
                     if (rows+1<DIM && this.board[rows + 1][cols] == 'O') {
-                        //if(this.board[r][c] == 'G'){
                         this.board[r][c] = '.';
-                        //    neighbors.add(new TiltConfig(DIM, this.board));
-                        //}
                     }
                     else if(r!=rows){
                         this.board[r][c] = '.';
@@ -120,7 +109,9 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        if(countBlue()==blueCount) {
+            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        }
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
@@ -143,7 +134,9 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        if(countBlue()==blueCount) {
+            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
+        }
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
@@ -161,9 +154,22 @@ public class TiltConfig implements Configuration {
                     }
                 }
             }
-//            return this.board == config.board;
         }
         return true;
+    }
+    public int countBlue(){
+        int count = 0;
+        for(int row = 0; row<DIM;row++){
+            for(int col=0;col<DIM;col++){
+                if(this.board[row][col] == 'B'){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public char[][] getBoard(){
+        return this.board;
     }
 
     @Override

@@ -1,8 +1,11 @@
 package puzzles.tilt.model;
 
 import puzzles.common.Observer;
+import puzzles.common.solver.Configuration;
 import puzzles.common.solver.Solver;
+import puzzles.tilt.solver.Tilt;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +15,21 @@ public class TiltModel {
 
     /** the current configuration */
     private TiltConfig currentConfig;
+    public static String LOADED = "loaded";
+    public TiltModel(TiltConfig currentConfig){
+        this.currentConfig = currentConfig;
+
+    }
+    public TiltConfig getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
+        Solver solver = new Solver();
+        List<Configuration> path = new ArrayList<>(solver.solve(currentConfig));
+        Configuration next = path.get(1);
+
+
+
+        return null;
+    }
+
 
     /**
      * The view calls this to add itself as an observer.

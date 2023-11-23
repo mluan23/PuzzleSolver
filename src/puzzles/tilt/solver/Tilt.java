@@ -11,53 +11,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tilt {
+    private List<Configuration> path;
+    private TiltConfig con;
+    private Solver solver;
+    public Tilt(){
+        path = new ArrayList<>();
+        solver = new Solver();
+    }
+    public char[][] getBoard(){
+        return con.getBoard();
+    }
+    public List<Configuration> solveConfig(TiltConfig current){
+        this.con = current;
+        try{
+            path.addAll(solver.solve(current));
+        }
+        catch (NullPointerException npe){
+            return null;
+        }
+        return path;
+    }
+    public TiltConfig readFile(String filename) throws IOException{
+        try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
+            int blueCount = 0;
+            int r = 0;
+            String f = in.readLine();
+            int dimensions = Integer.parseInt(f);
+            char[][] board = new char[dimensions][dimensions];
+            String line;
+            while ((line = in.readLine()) != null) {
+                String[] fields = line.split("\\s+");
+                for (int c = 0; c < dimensions; ++c) {
+                    board[r][c] = fields[c].charAt(0);
+                    if (board[r][c] == 'B') {
+                        blueCount++;
+                    }
+                }
+                r++;
+            }
+            return new TiltConfig(dimensions, board, blueCount);
+        }
+    }
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.out.println("Usage: java Tilt filename");
         }
         else {
-            try (BufferedReader in = new BufferedReader(new FileReader(args[0]))) {
-                int blueCount = 0;
-                int r = 0;
-                String f = in.readLine();
-                int dimensions = Integer.parseInt(f);
-                char[][] board = new char[dimensions][dimensions];
-                String line;
-                while ((line = in.readLine()) != null) {
-                    String[] fields = line.split("\\s+");
-                    for (int c = 0; c < dimensions; ++c) {
-                        board[r][c] = fields[c].charAt(0);
-                        if(board[r][c] == 'B'){
-                            blueCount++;
-                        }
-                    }
-                    r++;
-                }
-                TiltConfig tilt = new TiltConfig(dimensions, board, blueCount);
-                System.out.println(tilt);
-                Solver solver = new Solver();
-                List<Configuration> path = new ArrayList<>();
-                int num = 0;
-                System.out.println("Amount: " + args[0] + ", Buckets: ");
-                try {
-                    path.addAll(solver.solve(tilt));
-                } catch (NullPointerException npe) {
-                    System.out.println("Total configs: " + solver.getTotal());
-                    System.out.println("Unique configs: " + solver.getUnique());
-                    System.out.println("No solution");
-                    System.exit(0);
-                }
-                System.out.println("Total configs: " + solver.getTotal());
-                System.out.println("Unique configs: " + solver.getUnique());
-                if (path.get(0) == null) {
-                    System.out.println("Step " + num + ": \n" + tilt);
-                } else {
-                    for (Configuration steps : path) {
-                        System.out.println("Step " + num + ": \n" + steps);
-                        num++;
-                    }
+            Tilt t = new Tilt();
+            TiltConfig con = t.readFile(args[0]);
+            int num = 0;
+            System.out.println("File: " + args[0]);
+            System.out.println(con);
+            if (t.solveConfig(con) == null) {
+                System.out.println("Total configs: " + t.solver.getTotal());
+                System.out.println("Unique configs: " + t.solver.getUnique());
+                System.out.println("No solution");
+                System.exit(0);
+            }
+            System.out.println("Total configs: " + t.solver.getTotal());
+            System.out.println("Unique configs: " + t.solver.getUnique());
+            if (t.path.get(0) == null) {
+                System.out.println("Step " + num + ": \n" + con);
+            } else {
+                for (Configuration steps : t.path) {
+                    System.out.println("Step " + num + ": \n" + steps + "\n");
+                    num++;
                 }
             }
         }
     }
 }
+
