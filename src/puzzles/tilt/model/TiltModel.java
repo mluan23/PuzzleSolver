@@ -18,19 +18,19 @@ public class TiltModel {
     /** the current configuration */
     private TiltConfig currentConfig;
     private Tilt tilt;
-    public static String LOADED = "loaded";
+    public static String LOADED = "Loaded: ";
     public static String HINT_PREFIX = "hint";
     public static String LOAD_FAILED = "load failed";
     private char[][] board;
-    public TiltModel(TiltConfig currentConfig){
-        this.currentConfig = currentConfig;
+    private int dimensions;
+    public TiltModel(){
         tilt = new Tilt();
     }
     public TiltConfig getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
         List<Configuration> path = new ArrayList<>(tilt.solveConfig(currentConfig));
         Configuration next = path.get(1);
         TiltConfig a = (TiltConfig)next;
-        alertObservers(HINT_PREFIX + a.getBoard());
+        alertObservers(HINT_PREFIX + a);
         return a;
     }
     public TiltConfig loadBoardFile(String file) throws IOException{
@@ -40,38 +40,49 @@ public class TiltModel {
         try(BufferedReader in = new BufferedReader(new FileReader(file))){
             int r = 0;
             int blueCount = 0;
-            int dimensions = in.read();
+            String f = in.readLine();
+            int dimensions = Integer.parseInt(f);
             this.board = new char[dimensions][dimensions];
             String line;
             while((line = in.readLine()) != null){
                 String[] fields = line.split("\\s+");
                 for (int c = 0; c < dimensions; ++c) {
-                    if(!fields[c].equals("B") || !fields[c].equals("G")
-                            || !fields[c].equals("*") || !fields[c].equals("."))
-                    {
-                        alertObservers(LOAD_FAILED);
-                    }
-                    else {
-                        this.board[r][c] = fields[c].charAt(0);
+                    this.board[r][c] = fields[c].charAt(0);
+                    if(this.board[r][c] == 'B' || this.board[r][c] == 'G' ||
+                            this.board[r][c] == '*' || this.board[r][c] == '.' || this.board[r][c] == 'O'){
                         if(this.board[r][c] == 'B'){
                             blueCount++;
                         }
                     }
+                    else{
+                        alertObservers(LOAD_FAILED);
+                        return null;
+                    }
                 }
                 r++;
             }
-            alertObservers(LOADED);
-            return new TiltConfig(dimensions,this.board, blueCount);
+            TiltConfig t = new TiltConfig(dimensions,this.board, blueCount);
+            alertObservers(LOADED + file + "\n" + t);
+            return t;
         }
         catch (FileNotFoundException fnfe){
             alertObservers(LOAD_FAILED);
         }
         return null;
     }
-//    public static void main(String[] args){
-//        TiltModel model = new TiltModel()
-//    }
-
+    public static void main(String[] args) throws IOException{
+        TiltModel model = new TiltModel();
+        System.out.println(model.loadBoardFile(args[0]));
+    }
+    public int getDimensions(){
+        return this.dimensions;
+    }
+    public void setCurrentConfig(TiltConfig config){
+        this.currentConfig = config;
+    }
+    public boolean gameOver(){
+        return this.currentConfig.isSolution();
+    }
 
 
     /**
