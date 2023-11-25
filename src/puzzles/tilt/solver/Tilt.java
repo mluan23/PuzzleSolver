@@ -28,7 +28,6 @@ public class Tilt {
     }
 
     public List<Configuration> solveConfig(TiltConfig current) {
-        this.con = current;
         try {
             path.addAll(solver.solve(current));
         } catch (NullPointerException npe) {

@@ -20,19 +20,26 @@ public class TiltModel {
     private TiltConfig originalConfig;
     private Tilt tilt;
     public static String LOADED = "Loaded: ";
-    public static String HINT_PREFIX = "Next Step: \n";
-    public static String LOAD_FAILED = "load failed";
+    public static String HINT_PREFIX = "Next Step! \n";
+    public static String LOAD_FAILED = "Failed to load: ";
+    public static String NO_SOLUTION = "No solution! \n";
     private char[][] board;
+    List<Configuration> path;
     private int dimensions;
-    public TiltModel(){
-        tilt = new Tilt();
-    }
     public TiltConfig getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
-        List<Configuration> path = new ArrayList<>(tilt.solveConfig(currentConfig));
-        Configuration next = path.get(1);
-        TiltConfig a = (TiltConfig)next;
-        alertObservers(HINT_PREFIX + a);
-        return a;
+        tilt = new Tilt();
+        try {
+            path = new ArrayList<>(tilt.solveConfig(currentConfig));
+            Configuration next = path.get(1);
+            TiltConfig a = (TiltConfig) next;
+            currentConfig = a;
+            alertObservers(HINT_PREFIX + a);
+            return a;
+        }
+        catch (NullPointerException npe){
+            alertObservers(NO_SOLUTION + originalConfig);
+        }
+        return null;
     }
     public TiltConfig loadBoardFile(String file) throws IOException{
         return loadBoardFile(new File(file));
@@ -68,7 +75,7 @@ public class TiltModel {
             return t;
         }
         catch (FileNotFoundException fnfe){
-            alertObservers(LOAD_FAILED);
+            alertObservers(LOAD_FAILED + file);
         }
         return null;
     }
@@ -91,6 +98,7 @@ public class TiltModel {
     public boolean gameOver(){
         return this.currentConfig.isSolution();
     }
+
 
 
     /**
