@@ -57,7 +57,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
+        if(countBlue()==blueCount) {
             return (new TiltConfig(DIM, this.board, blueCount));
         }
         return null;
@@ -84,7 +84,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
+        if(countBlue()==blueCount) {
             return (new TiltConfig(DIM, this.board, blueCount));
         }
         return null;
@@ -111,7 +111,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
+        if(countBlue()==blueCount) {
             return (new TiltConfig(DIM, this.board, blueCount));
         }
         return null;
@@ -138,7 +138,7 @@ public class TiltConfig implements Configuration {
                 }
             }
         }
-        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
+        if(countBlue()==blueCount) {
             return (new TiltConfig(DIM, this.board, blueCount));
         }
         return null;

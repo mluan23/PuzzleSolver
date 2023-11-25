@@ -17,9 +17,10 @@ public class TiltModel {
 
     /** the current configuration */
     private TiltConfig currentConfig;
+    private TiltConfig originalConfig;
     private Tilt tilt;
     public static String LOADED = "Loaded: ";
-    public static String HINT_PREFIX = "hint";
+    public static String HINT_PREFIX = "Next Step: \n";
     public static String LOAD_FAILED = "load failed";
     private char[][] board;
     private int dimensions;
@@ -62,7 +63,8 @@ public class TiltModel {
                 r++;
             }
             TiltConfig t = new TiltConfig(dimensions,this.board, blueCount);
-            alertObservers(LOADED + file + "\n" + t);
+            originalConfig = t;
+            alertObservers(LOADED + file + "\n" + t + "\n");
             return t;
         }
         catch (FileNotFoundException fnfe){
@@ -79,6 +81,12 @@ public class TiltModel {
     }
     public void setCurrentConfig(TiltConfig config){
         this.currentConfig = config;
+    }
+    public TiltConfig getCurrentConfig(){
+        return this.currentConfig;
+    }
+    public TiltConfig getOriginalConfig(){
+        return originalConfig;
     }
     public boolean gameOver(){
         return this.currentConfig.isSolution();
