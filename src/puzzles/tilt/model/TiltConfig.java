@@ -58,8 +58,11 @@ public class TiltConfig implements Configuration {
             }
         }
         if(countBlue()==blueCount) {
-            return (new TiltConfig(DIM, this.board, blueCount));
+            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
+            this.reset();
+            return next;
         }
+        this.reset();
         return null;
     }
     public TiltConfig right(){
@@ -85,8 +88,11 @@ public class TiltConfig implements Configuration {
             }
         }
         if(countBlue()==blueCount) {
-            return (new TiltConfig(DIM, this.board, blueCount));
+            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
+            this.reset();
+            return next;
         }
+        this.reset();
         return null;
     }
     public TiltConfig down(){
@@ -112,8 +118,11 @@ public class TiltConfig implements Configuration {
             }
         }
         if(countBlue()==blueCount) {
-            return (new TiltConfig(DIM, this.board, blueCount));
+            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
+            this.reset();
+            return next;
         }
+        this.reset();
         return null;
     }
     public TiltConfig left(){
@@ -139,8 +148,11 @@ public class TiltConfig implements Configuration {
             }
         }
         if(countBlue()==blueCount) {
-            return (new TiltConfig(DIM, this.board, blueCount));
+            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
+            this.reset();
+            return next;
         }
+        this.reset();
         return null;
     }
     public void reset(){
@@ -151,126 +163,18 @@ public class TiltConfig implements Configuration {
 
     @Override
     public Collection<Configuration> getNeighbors() {
-//        int rows;
-//        int cols;
-//        for(int r = 1; r<DIM; r++){
-//            for(int c = 0; c < DIM; c++){
-//                rows = r;
-//                cols = c;
-//                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // up option
-//                    char marker = this.board[r][c];
-//                    while(rows-1 >= 0 && board[rows-1][cols] == '.' ){
-//                        rows--;
-//                    }
-//                    if (rows-1 >= 0&& this.board[rows - 1][cols] == 'O') { // the slider fell into the hole
-//                        this.board[r][c] = '.';
-//                    }
-//                    else if(r!=rows){
-//                        this.board[r][c] = '.';
-//                        this.board[rows][c] = marker;
-//                    }
-//                }
-//            }
-//        }
-//        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
-//            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
-//        }
-//        for (int row = 0; row<DIM; row++){
-//            System.arraycopy(original[row],0,this.board[row],0,DIM);
-//        }
-//        for(int c = DIM-2; c >= 0 ; c--){
-//            for(int r = 0; r < DIM ; r++){
-//                rows = r;
-//                cols = c;
-//                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // right option
-//                    char marker = this.board[r][c];
-//                    while(cols+1 < DIM && board[rows][cols+1] == '.' ){
-//                        cols++;
-//                    }
-//                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
-//                        this.board[r][c] = '.';
-//                    }
-//                    else if(c!=cols){
-//                        this.board[r][c] = '.';
-//                        this.board[r][cols] = marker;
-//                    }
-//                }
-//            }
-//        }
-//        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
-//            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
-//        }
-//        for (int row = 0; row<DIM; row++){
-//            System.arraycopy(original[row],0,this.board[row],0,DIM);
-//        }
-//        for(int r = DIM-2; r>=0; r--){
-//            for(int c = 0; c < DIM; c++){
-//                rows = r;
-//                cols = c;
-//                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // down option
-//                    char marker = this.board[r][c];
-//                    while(rows+1 < DIM && board[rows+1][cols] == '.' ){
-//                        rows++;
-//                    }
-//                    if (rows+1<DIM && this.board[rows + 1][cols] == 'O') {
-//                        this.board[r][c] = '.';
-//                    }
-//                    else if(r!=rows){
-//                        this.board[r][c] = '.';
-//                        this.board[rows][c] = marker;
-//                    }
-//                }
-//            }
-//        }
-//        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
-//            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
-//        }
-//        for (int row = 0; row<DIM; row++){
-//            System.arraycopy(original[row],0,this.board[row],0,DIM);
-//        }
-//        for(int c = 1; c<DIM; c++){
-//            for(int r = 0; r < DIM; r++){
-//                rows = r;
-//                cols = c;
-//                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // left option
-//                    char marker = this.board[r][c];
-//                    while(cols-1 >= 0 && board[rows][cols-1] == '.' ){
-//                        cols--;
-//                    }
-//                    if (cols-1 >= 0 && this.board[rows][cols-1] == 'O') {
-//                        this.board[r][c] = '.';
-//                    }
-//                    else if(c!=cols){
-//                        this.board[r][c] = '.';
-//                        this.board[r][cols] = marker;
-//                    }
-//                }
-//            }
-//        }
-//        if(countBlue()==blueCount && !Arrays.deepEquals(this.board, original)) {
-//            neighbors.add(new TiltConfig(DIM, this.board, blueCount));
-//        }
-//        for (int row = 0; row<DIM; row++){
-//            System.arraycopy(original[row],0,this.board[row],0,DIM);
-//        }
-//        return neighbors;
-//    }
         if (this.up() != null) {
             neighbors.add(this.up());
         }
-        this.reset();
         if (this.right() != null) {
             neighbors.add(this.right());
         }
-        this.reset();
         if (this.down() != null) {
             neighbors.add(this.down());
         }
-        this.reset();
         if (this.left() != null) {
             neighbors.add(this.left());
         }
-        this.reset();
         return neighbors;
     }
     @Override

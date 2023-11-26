@@ -18,28 +18,42 @@ public class TiltModel {
     /** the current configuration */
     private TiltConfig currentConfig;
     private TiltConfig originalConfig;
+    private TiltConfig finishedConfig;
     private Tilt tilt;
     public static String LOADED = "Loaded: ";
-    public static String HINT_PREFIX = "Next Step! \n";
+    public static String HINT_PREFIX = "Next step! \n";
     public static String LOAD_FAILED = "Failed to load: ";
     public static String NO_SOLUTION = "No solution! \n";
+    public static String FINISHED = "Already solved!";
+    public static String MOVE = "Tilted";
+    public static String ILLEGAL = "Illegal move. A blue slider will fall through the hole!";
+    public static String RESET = "Puzzle Reset! \n";
     private char[][] board;
     List<Configuration> path;
     private int dimensions;
-    public TiltConfig getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
+    public void getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
         tilt = new Tilt();
         try {
             path = new ArrayList<>(tilt.solveConfig(currentConfig));
-            Configuration next = path.get(1);
-            TiltConfig a = (TiltConfig) next;
-            currentConfig = a;
-            alertObservers(HINT_PREFIX + a);
-            return a;
+            Configuration finished = path.get(0);
+            TiltConfig finish = (TiltConfig) finished;
+            finishedConfig = finish;
+            Configuration n = path.get(1);
+            TiltConfig next = (TiltConfig) n;
+            currentConfig = next;
+            alertObservers(HINT_PREFIX + next);
         }
         catch (NullPointerException npe){
-            alertObservers(NO_SOLUTION + originalConfig);
+            alertObservers(NO_SOLUTION + currentConfig + "\n");
         }
-        return null;
+        catch (IndexOutOfBoundsException e){
+            alertObservers(FINISHED + "\n" + currentConfig + "\n");
+            currentConfig = finishedConfig;
+        }
+    }
+    public void reset(){
+        currentConfig = originalConfig;
+        alertObservers(RESET);
     }
     public TiltConfig loadBoardFile(String file) throws IOException{
         return loadBoardFile(new File(file));
@@ -79,12 +93,31 @@ public class TiltModel {
         }
         return null;
     }
+    public TiltConfig makeMove(String direction){
+        TiltConfig move = currentConfig;
+        if(direction.equals("north")){
+            move = currentConfig.up();
+        } else if (direction.equals("south")) {
+            move = currentConfig.down();
+
+        }  else if (direction.equals("east")) {
+            move = currentConfig.right();
+
+        }  else if (direction.equals("west")) {
+            move = currentConfig.left();
+        }
+        if(move!=null) {
+            currentConfig = move;
+            alertObservers(MOVE);
+        }
+        else{
+            alertObservers(ILLEGAL);
+        }
+        return move;
+    }
     public static void main(String[] args) throws IOException{
         TiltModel model = new TiltModel();
         System.out.println(model.loadBoardFile(args[0]));
-    }
-    public int getDimensions(){
-        return this.dimensions;
     }
     public void setCurrentConfig(TiltConfig config){
         this.currentConfig = config;
