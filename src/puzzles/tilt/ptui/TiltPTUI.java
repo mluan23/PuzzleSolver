@@ -25,6 +25,9 @@ public class TiltPTUI implements Observer<TiltModel, String> {
     }
     public void gameLoop(String file) throws IOException{
         model.setCurrentConfig(model.loadBoardFile(file));
+        if(model.getCurrentConfig()==null){
+            return;
+        }
         help();
         while(true){
             String command = scan.nextLine().strip();
@@ -33,7 +36,6 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                 model.getHint();
             }
             else if(command.equals("q") || command.equals("Q") || command.equals("quit") || command.equals("Quit")){
-                System.out.println("Quitting the current game.");
                 return;
             }
             else if(command.equals("r") || command.equals("R") || command.equals("reset") || command.equals("Reset")){
@@ -82,19 +84,18 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         }
         else if(message.startsWith(TiltModel.LOAD_FAILED)){
             System.out.println(message);
-            System.out.println(this.model.getCurrentConfig());
-            return;
+            if(this.model.getCurrentConfig()!=null) {
+                System.out.println(this.model.getCurrentConfig());
+            }
         }
         else if (message.startsWith(TiltModel.HINT_PREFIX)){
             System.out.println(message + "\n");
         }
         else if (message.startsWith(TiltModel.NO_SOLUTION)){
             System.out.println(message);
-            return;
         }
         else if (message.startsWith(TiltModel.FINISHED)){
             System.out.println(message);
-            return;
         }
         else if(message.startsWith(TiltModel.MOVE)){
             if(model.getCurrentConfig()!=null) {

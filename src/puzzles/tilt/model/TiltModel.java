@@ -19,7 +19,6 @@ public class TiltModel {
     private TiltConfig currentConfig;
     private TiltConfig originalConfig;
     private TiltConfig finishedConfig;
-    private Tilt tilt;
     public static String LOADED = "Loaded: ";
     public static String HINT_PREFIX = "Next step! \n";
     public static String LOAD_FAILED = "Failed to load: ";
@@ -29,12 +28,16 @@ public class TiltModel {
     public static String ILLEGAL = "Illegal move. A blue slider will fall through the hole!";
     public static String RESET = "Puzzle Reset! \n";
     private char[][] board;
-    List<Configuration> path;
-    private int dimensions;
-    public void getHint(){ // plug the current config into the solver, get the path, take path(1), that is the hint
-        tilt = new Tilt();
+    public TiltModel(){
+        currentConfig = null;
+        finishedConfig = null;
+        originalConfig = null;
+    }
+
+    public void getHint(){
+        Tilt tilt = new Tilt();
         try {
-            path = new ArrayList<>(tilt.solveConfig(currentConfig));
+            List<Configuration> path = new ArrayList<>(tilt.solveConfig(currentConfig));
             Configuration finished = path.get(0);
             TiltConfig finish = (TiltConfig) finished;
             finishedConfig = finish;

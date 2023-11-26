@@ -4,10 +4,15 @@ import puzzles.common.solver.Configuration;
 import java.util.*;
 
 public class TiltConfig implements Configuration {
+    /** the dimensions of the board */
     private final int DIM;
+    /** the neighboring configs */
     private List<Configuration> neighbors;
+    /** represents the board of the config */
     private char[][] board;
+    /** the starting board of the given config */
     private char[][] original;
+    /** the number of blue disks on the board */
     private int blueCount;
 
     public TiltConfig(int dimensions, char[][] board, int blueCount) {
@@ -15,7 +20,7 @@ public class TiltConfig implements Configuration {
         neighbors = new ArrayList<>();
         this.DIM = dimensions;
         original = new char[DIM][DIM];
-        this.board = new char[dimensions][dimensions];
+        this.board = new char[DIM][DIM];
         for (int row = 0; row < this.DIM; row++) {
             for(int col = 0; col < this.DIM; col++){
                 this.board[row][col] = board[row][col];
@@ -176,6 +181,9 @@ public class TiltConfig implements Configuration {
             neighbors.add(this.left());
         }
         return neighbors;
+    }
+    public int getDimensions(){
+        return DIM;
     }
     @Override
     public boolean equals(Object other) {
