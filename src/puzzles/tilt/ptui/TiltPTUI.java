@@ -80,7 +80,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
     @Override
     public void update(TiltModel model, String message) {
         if(message.startsWith(TiltModel.LOADED)){
-            System.out.println(message);
+            System.out.println(message  + "\n" + model.getOriginalConfig() + "\n");
         }
         else if(message.startsWith(TiltModel.LOAD_FAILED)){
             System.out.println(message);

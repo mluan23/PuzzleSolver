@@ -88,7 +88,7 @@ public class TiltModel {
             }
             TiltConfig t = new TiltConfig(dimensions,this.board, blueCount);
             originalConfig = t;
-            alertObservers(LOADED + file + "\n" + t + "\n");
+            alertObservers(LOADED + file);
             return t;
         }
         catch (FileNotFoundException fnfe){
@@ -117,10 +117,6 @@ public class TiltModel {
             alertObservers(ILLEGAL);
         }
         return move;
-    }
-    public static void main(String[] args) throws IOException{
-        TiltModel model = new TiltModel();
-        System.out.println(model.loadBoardFile(args[0]));
     }
     public void setCurrentConfig(TiltConfig config){
         this.currentConfig = config;
