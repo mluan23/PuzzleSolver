@@ -1,5 +1,6 @@
 package puzzles.tilt.gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -7,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import puzzles.common.Observer;
 import puzzles.tilt.model.TiltConfig;
 import puzzles.tilt.model.TiltModel;
@@ -34,18 +36,19 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private TiltConfig current;
     private Text text;
     private int dimensions;
+    private final int SIZE = 500;
     public GridPane makeGridPane() {
         GridPane gridPane = new GridPane();
-
         buttons = new Button[dimensions][dimensions];
         for (int row = 0; row < dimensions; row++) {
             for (int col = 0; col < dimensions; col++) {
                 int r = row;
                 int c = col;
                 Button button = new Button();
-                button.setPrefWidth(100);
-                button.setPrefHeight(100);
+                button.setPrefWidth((double) SIZE /dimensions);
+                button.setPrefHeight((double) SIZE /dimensions);
                 buttons[r][c] = button;
+                gridPane.add(button, col, row);
             }
         }
         return gridPane;
@@ -58,37 +61,90 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
 
     public void init() throws IOException{
         String filename = getParameters().getRaw().get(0);
+        this.model = new TiltModel();
         current = loadFile(filename);
         dimensions = current.getDimensions();
-        this.model = new TiltModel();
+        board = new char[dimensions][dimensions];
         model.addObserver(this);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane borderPane = new BorderPane();
-        GridPane center = new GridPane();
-        VBox top = new VBox();
-        Button up = new Button();
-        Button down = new Button();
-        Button rightButton = new Button();
-        Button left = new Button();
+        BorderPane outer = new BorderPane();
+        BorderPane inner = new BorderPane();
+        HBox upBox = new HBox();
+        HBox downBox = new HBox();
+        HBox rightBox = new HBox();
+        HBox leftBox = new HBox();
+        upBox.setAlignment(Pos.CENTER);
+        downBox.setAlignment(Pos.CENTER);
+        rightBox.setAlignment(Pos.CENTER);
+        leftBox.setAlignment(Pos.CENTER);
+        GridPane center = makeGridPane();
+        center.setAlignment(Pos.CENTER);
+        Button upArrow = new Button("^");
+        upArrow.setAlignment(Pos.CENTER);
+        upArrow.setPrefWidth(SIZE*.8);
+        Button downArrow = new Button("V");
+        downArrow.setAlignment(Pos.CENTER);
+        downArrow.setPrefWidth(SIZE*.8);
+        Button rightArrow = new Button(">");
+        rightArrow.setAlignment(Pos.CENTER);
+        rightArrow.setPrefHeight(SIZE*.78);
+        Button leftArrow = new Button("<");
+        leftArrow.setAlignment(Pos.CENTER);
+        leftArrow.setPrefHeight(SIZE*.78);
+        HBox top = new HBox();
         text = new Text("Test");
+        top.getChildren().add(text);
+        top.setAlignment(Pos.CENTER);
         HBox right = new HBox();
         VBox threeButtons = new VBox();
+        threeButtons.setAlignment(Pos.CENTER);
+        threeButtons.setSpacing(20);
         Button load = new Button("Load");
         Button reset = new Button("Reset");
         Button hint = new Button("Hint");
         threeButtons.getChildren().addAll(load, reset, hint);
-        top.getChildren().addAll(text, up);
-        right.getChildren().addAll(rightButton, threeButtons);
-        borderPane.getChildren().addAll(top,center,down,right,left);
+        right.getChildren().addAll(rightArrow, threeButtons);
+        upBox.getChildren().add(upArrow);
+        downBox.getChildren().add(downArrow);
+        rightBox.getChildren().add(rightArrow);
+        leftBox.getChildren().add(leftArrow);
+        inner.setTop(upBox);
+        inner.setCenter(center);
+        inner.setRight(rightBox);
+        inner.setLeft(leftBox);
+        inner.setBottom(downBox);
+        outer.setTop(top);
+        outer.setCenter(inner);
+        outer.setRight(threeButtons);
 //        Button button = new Button();
 //        button.setGraphic(new ImageView(greenDisk));
-        Scene scene = new Scene(borderPane);
-        stage.setTitle("Tilt GUI");
+        Scene scene = new Scene(outer);
         stage.setScene(scene);
+        //setBoard();
+        stage.setWidth(SIZE);
+        stage.setHeight(SIZE);
+        stage.setResizable(false);
+        stage.setTitle("Tilt GUI");
         stage.show();
+    }
+    private void setBoard(){
+        for(int rows = 0; rows<dimensions; rows++){
+            for (int cols = 0; cols<dimensions; cols++){
+                if(current.getBoard()[rows][cols] == 'G'){
+                    buttons[rows][cols].setGraphic(new ImageView(greenDisk));
+                }
+                else if(current.getBoard()[rows][cols] == 'B'){
+                    buttons[rows][cols].setGraphic(new ImageView(blueDisk));
+                }
+                else if (current.getBoard()[rows][cols] == '*'){
+                    buttons[rows][cols].setGraphic(new ImageView(blueDisk));
+                }
+
+            }
+        }
     }
 
     @Override
