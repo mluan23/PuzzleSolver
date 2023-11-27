@@ -7,6 +7,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import puzzles.common.Observer;
 import puzzles.tilt.model.TiltConfig;
 import puzzles.tilt.model.TiltModel;
@@ -29,11 +30,12 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private Image blocker = new Image(getClass().getResourceAsStream(RESOURCES_DIR+"block.png"));
     private Image hole = new Image(getClass().getResourceAsStream(RESOURCES_DIR+"hole.png"));
     private static Background EMPTY = new Background(new BackgroundFill(Color.SLATEGRAY,null,null));
+    private static Background BLACK = new Background(new BackgroundFill(Color.BLACK, null, null));
     private Button[][] buttons;
     private TiltModel model;
     private Text text;
     private int dimensions;
-    private final int SIZE = 500;
+    private final int SIZE = 550;
     public GridPane makeGridPane() {
         GridPane gridPane = new GridPane();
         buttons = new Button[dimensions][dimensions];
@@ -50,17 +52,27 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         }
         return gridPane;
     }
-    public TiltConfig loadFile(String file) throws IOException {
-        model.setCurrentConfig(model.loadBoardFile(file));
-
-        return model.getCurrentConfig();
+    public void loadFile(String file) throws IOException {
+        TiltConfig t = model.loadBoardFile(file);
+        if (t != null) {
+            model.setCurrentConfig(t);
+            dimensions = model.getCurrentConfig().getDimensions();
+        }
+    }
+    public void chooseFile(Stage stage) throws IOException{
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load a game board");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")+"/data/tilt"));
+        fileChooser.getExtensionFilters().addAll
+                (new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        model.loadBoardFile(selectedFile);
     }
 
     public void init() throws IOException{
         String filename = getParameters().getRaw().get(0);
         this.model = new TiltModel();
-        model.setCurrentConfig(loadFile(filename));
-        dimensions = model.getCurrentConfig().getDimensions();
+        loadFile(filename);
         model.addObserver(this);
     }
 
@@ -80,31 +92,40 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         center.setAlignment(Pos.CENTER);
         center.setVgap(4);
         center.setHgap(4);
+        center.setBackground(BLACK);
         Button upArrow = new Button("^");
         upArrow.setOnAction(event -> {
-            model.makeMove("north");
-            setBoard();
+            if(!model.gameOver()) {
+                model.makeMove("north");
+                setBoard();
+            }
         });
         upArrow.setAlignment(Pos.CENTER);
         upArrow.setPrefWidth(SIZE*.8);
         Button downArrow = new Button("V");
         downArrow.setOnAction(event -> {
-            model.makeMove("south");
-            setBoard();
+            if(!model.gameOver()) {
+                model.makeMove("south");
+                setBoard();
+            }
         });
         downArrow.setAlignment(Pos.CENTER);
         downArrow.setPrefWidth(SIZE*.8);
         Button rightArrow = new Button(">");
         rightArrow.setOnAction(event -> {
-            model.makeMove("east");
-            setBoard();
+            if(!model.gameOver()) {
+                model.makeMove("east");
+                setBoard();
+            }
         });
         rightArrow.setAlignment(Pos.CENTER);
         rightArrow.setPrefHeight(SIZE*.78);
         Button leftArrow = new Button("<");
         leftArrow.setOnAction(event -> {
-            model.makeMove("west");
-            setBoard();
+            if(!model.gameOver()) {
+                model.makeMove("west");
+                setBoard();
+            }
         });
         leftArrow.setAlignment(Pos.CENTER);
         leftArrow.setPrefHeight(SIZE*.78);
@@ -117,6 +138,14 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         threeButtons.setAlignment(Pos.CENTER);
         threeButtons.setSpacing(20);
         Button load = new Button("Load");
+        load.setOnAction(event -> {
+                try {
+                    chooseFile(stage);
+                    setBoard();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+        });
         Button reset = new Button("Reset");
         reset.setOnAction(event -> {
             model.reset();
@@ -178,7 +207,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
                 else{
                     buttons[rows][cols].setBackground(EMPTY);
                 }
-
             }
         }
     }
@@ -188,17 +216,26 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         if(message.startsWith(TiltModel.LOADED)){
             this.text.setText(message);
         }
+        else if (message.startsWith(TiltModel.LOAD_FAILED)){
+            System.out.println(message);
+        }
         else if (message.startsWith(TiltModel.HINT_PREFIX)){
             text.setText("Next step!");
         }
         else if (message.startsWith(TiltModel.NO_SOLUTION)){
             text.setText("No solution!");
         }
+        else if (message.startsWith(TiltModel.MOVE)){
+            text.setText("");
+        }
         else if (message.equals(TiltModel.ILLEGAL)){
             text.setText(message);
         }
         else if (message.equals(TiltModel.RESET)){
             text.setText(message);
+        }
+        if(model.gameOver()){
+            text.setText("Congratulations!");
         }
     }
 
