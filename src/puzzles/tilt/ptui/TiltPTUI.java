@@ -32,13 +32,13 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         while(true){
             String command = scan.nextLine().strip();
             System.out.print("> ");
-            if(command.equals("h") || command.equals("H")){
+            if(command.equalsIgnoreCase("h")){
                 model.getHint();
             }
-            else if(command.equals("q") || command.equals("Q") || command.equals("quit") || command.equals("Quit")){
+            else if(command.equalsIgnoreCase("q") || command.equalsIgnoreCase("quit")){
                 return;
             }
-            else if(command.equals("r") || command.equals("R") || command.equals("reset") || command.equals("Reset")){
+            else if(command.equalsIgnoreCase("r") || command.equalsIgnoreCase("reset")){
                 model.reset();
             }
             else{
@@ -49,20 +49,19 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                     help();
                 }
                 else {
-                    if (options[0].equals("l") || options[1].equals("L")
-                            || command.equals("load") || command.equals("Load")) {
+                    if (options[0].equalsIgnoreCase("l") || command.equalsIgnoreCase("load")){
                         TiltConfig t = model.loadBoardFile(options[1]);
                         if (t != null) {
                             model.setCurrentConfig(t);
                         }
                     } else {
-                        if (options[1].equals("n") || options[1].equals("N")) {
+                        if (options[1].equalsIgnoreCase("n")) {
                             next = model.makeMove("north");
-                        } else if (options[1].equals("s") || options[1].equals("S")) {
+                        } else if (options[1].equalsIgnoreCase("s")) {
                             next = model.makeMove("south");
-                        } else if (options[1].equals("e") || options[1].equals("E")) {
+                        } else if (options[1].equalsIgnoreCase("e")) {
                             next = model.makeMove("east");
-                        } else if (options[1].equals("w") || options[1].equals("W")) {
+                        } else if (options[1].equalsIgnoreCase("w")) {
                             next = model.makeMove("west");
                         } else {
                             System.out.println();

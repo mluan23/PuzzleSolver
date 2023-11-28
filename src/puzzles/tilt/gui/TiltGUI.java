@@ -36,8 +36,16 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private Text text;
     private int dimensions;
     private final int SIZE = 550;
-    public GridPane makeGridPane() {
-        GridPane gridPane = new GridPane();
+    private GridPane center;
+    public void setCenter(){
+
+    }
+    public void makeBoard() {
+        center = new GridPane();
+        center.setAlignment(Pos.CENTER);
+        center.setVgap(4);
+        center.setHgap(4);
+        center.setBackground(BLACK);
         buttons = new Button[dimensions][dimensions];
         for (int row = 0; row < dimensions; row++) {
             for (int col = 0; col < dimensions; col++) {
@@ -47,10 +55,9 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
                 button.setPrefWidth((double) SIZE /dimensions);
                 button.setPrefHeight((double) SIZE /dimensions);
                 buttons[r][c] = button;
-                gridPane.add(button, col, row);
+                center.add(button, col, row);
             }
         }
-        return gridPane;
     }
     public void loadFile(String file) throws IOException {
         TiltConfig t = model.loadBoardFile(file);
@@ -66,7 +73,8 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         fileChooser.getExtensionFilters().addAll
                 (new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(stage);
-        model.loadBoardFile(selectedFile);
+        model.setCurrentConfig(model.loadBoardFile(selectedFile));
+        dimensions = model.getCurrentConfig().getDimensions();
     }
 
     public void init() throws IOException{
@@ -88,11 +96,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         downBox.setAlignment(Pos.CENTER);
         rightBox.setAlignment(Pos.CENTER);
         leftBox.setAlignment(Pos.CENTER);
-        GridPane center = makeGridPane();
-        center.setAlignment(Pos.CENTER);
-        center.setVgap(4);
-        center.setHgap(4);
-        center.setBackground(BLACK);
+        makeBoard();
         Button upArrow = new Button("^");
         upArrow.setOnAction(event -> {
             if(!model.gameOver()) {
@@ -141,7 +145,9 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         load.setOnAction(event -> {
                 try {
                     chooseFile(stage);
+                    makeBoard();
                     setBoard();
+                    inner.setCenter(center);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -154,7 +160,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         Button hint = new Button("Hint");
         hint.setOnAction(event -> {
             model.getHint();
-            this.setBoard();
+            setBoard();
         });
         threeButtons.getChildren().addAll(load, reset, hint);
         right.getChildren().addAll(rightArrow, threeButtons);
