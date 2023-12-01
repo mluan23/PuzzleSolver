@@ -56,7 +56,7 @@ public class TipOver {
         if (args.length != 1) {
             System.out.println("Usage: java TipOver filename");
         }
-        else {
+        /** else {
             int num = 0;
             TipOverConfig tOC = new TipOverConfig();
             System.out.println(clock);
@@ -82,6 +82,6 @@ public class TipOver {
                     num++;
                 }
             }
-        }
+        } */
     }
 }
