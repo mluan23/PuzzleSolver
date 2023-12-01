@@ -56,32 +56,5 @@ public class TipOver {
         if (args.length != 1) {
             System.out.println("Usage: java TipOver filename");
         }
-        /** else {
-            int num = 0;
-            TipOverConfig tOC = new TipOverConfig();
-            System.out.println(clock);
-            Solver solver = new Solver();
-            List<Configuration> path = new ArrayList<>();
-            try{
-                path.addAll(solver.solve(clock));
-            }
-            catch(NullPointerException npe){
-                System.out.println("Total configs: " + solver.getTotal());
-                System.out.println("Unique configs: " + solver.getUnique());
-                System.out.println("No solution");
-                System.exit(0);
-            }
-            System.out.println("Total configs: " + solver.getTotal());
-            System.out.println("Unique configs: " + solver.getUnique());
-            if(path.get(0) == null){
-                System.out.println("Step " + num + ": " + clock.hashCode());
-            }
-            else {
-                for (Configuration steps : path) {
-                    System.out.println("Step " + num + ": " + steps.hashCode());
-                    num++;
-                }
-            }
-        } */
     }
 }
