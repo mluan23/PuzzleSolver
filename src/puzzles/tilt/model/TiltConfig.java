@@ -3,6 +3,10 @@ package puzzles.tilt.model;
 import puzzles.common.solver.Configuration;
 import java.util.*;
 
+/**
+ * The representation for a single TiltConfig for the Tilt puzzle.
+ */
+
 public class TiltConfig implements Configuration {
     /** the dimensions of the board */
     private final int DIM;
@@ -49,6 +53,7 @@ public class TiltConfig implements Configuration {
     /**
      * Gives the config if the board were to be tilted in the given direction, only if it does not result in a blue
      * disk falling into the hole.
+     * @param direction the direction to tilt the board
      * @return the config for the direction the board was tilted in or null if the move is illegal
      */
     public TiltConfig move(String direction){
@@ -219,10 +224,19 @@ public class TiltConfig implements Configuration {
         return false;
     }
 
+    /**
+     * The hashcode of the TiltConfig is equal to the hashcode of the board.
+     * @return the hashcode
+     */
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
+
+    /**
+     * Represents each TiltConfig as the board.
+     * @return the String representation of the TiltConfig
+     */
 
     @Override
     public String toString() {

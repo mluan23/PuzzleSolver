@@ -11,7 +11,6 @@ import java.util.Scanner;
  * The TUI representation for Tilt.
  */
 
-
 public class TiltPTUI implements Observer<TiltModel, String> {
     /** the model */
     private TiltModel model;
@@ -30,16 +29,15 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         System.out.println("h(int)              -- hint next move");
         System.out.println("l(oad) filename     -- load new puzzle file");
         System.out.println("t(ilt) {N|S|E|W}    -- tilt the board in the given direction");
-        System.out.println("q(uit)              -- quit the current game");
+        System.out.println("q(uit)              -- quit the game");
         System.out.println("r(eset)             -- reset the current game");
     }
 
     /**
      * The gameloop for the TUI that keeps getting user input until the user quits.
      * @param file the file for the game board
-     * @throws IOException if the file cannot be found
      */
-    private void gameLoop(String file) throws IOException{
+    private void gameLoop(String file) {
         model.loadBoardFile(file);
         if(model.getCurrentConfig()==null){
             return;
@@ -61,7 +59,6 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                 TiltConfig next = null;
                 String[] options = command.split("\\s+");
                 if(options.length!=2){
-                    System.out.println();
                     help();
                 }
                 else {
@@ -88,6 +85,14 @@ public class TiltPTUI implements Observer<TiltModel, String> {
             }
         }
 
+    /**
+     * This method is called when making an action that would
+     * @param model the object that wishes to inform this object
+     *                about something that has happened.
+     * @param message optional data the server.model can send to the observer
+     *
+     */
+
 
     @Override
     public void update(TiltModel model, String message) {
@@ -97,7 +102,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         else if(message.startsWith(TiltModel.LOAD_FAILED)){
             System.out.println(message);
             if(this.model.getCurrentConfig()!=null) {
-                System.out.println(this.model.getCurrentConfig());
+                System.out.println(this.model.getCurrentConfig() + "\n");
             }
         }
         else if (message.startsWith(TiltModel.HINT)){
@@ -122,7 +127,12 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         }
     }
 
-    public static void main(String[] args) throws IOException{
+    /**
+     * Creates tui and runs the gameloop.
+     * @param args [0] the filename
+     */
+
+    public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java TiltPTUI filename");
         }

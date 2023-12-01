@@ -16,8 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 
 public class TiltGUI extends Application implements Observer<TiltModel, String> {
     /** The resources directory is located directly underneath the gui package */
@@ -42,23 +40,23 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private Text text = new Text();
     /** the dimensions of the game board */
     private int dimensions;
-    /** the height of the stage */
-    private final double HEIGHT = 550.0;
-    private final double WIDTH = 550;
+    /** the dimensions of the stage */
+    private final double SIZE = 650.0;
     /** the GridPane that represents the game board */
     private GridPane center;
-    private String filename = "";
+    private String shortFilename;
 
     /**
-     *
-     *
+     * Creates a new model and adds the GUI as an observer. Attempts to load the file given in the
+     * command line.
      */
 
     public void init() {
         String filename = getParameters().getRaw().get(0);
+        File file = new File(filename);
         this.model = new TiltModel();
         model.addObserver(this);
-        loadFile(filename);
+        loadFile(file);
     }
 
     /**
@@ -77,10 +75,10 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
             }
         });
         if(direction.equals("north") || direction.equals("south")){
-            arrow.setPrefWidth(HEIGHT*value);
+            arrow.setPrefWidth(SIZE*value);
         }
         else{
-            arrow.setPrefHeight(HEIGHT*value);
+            arrow.setPrefHeight(SIZE*value);
         }
         arrow.setAlignment(Pos.CENTER);
         return arrow;
@@ -165,8 +163,8 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         Scene scene = new Scene(outer);
         stage.setScene(scene);
         setBoard();
-        stage.setWidth(WIDTH);
-        stage.setHeight(HEIGHT);
+        stage.setWidth(SIZE);
+        stage.setHeight(SIZE);
         stage.setResizable(false);
         stage.setTitle("Tilt GUI");
         stage.show();
@@ -178,7 +176,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * @param inner the inner BorderPane
      * @return the loading button
      */
-
     private Button loadButton(Stage stage, BorderPane inner) {
         Button load = new Button("Load");
         load.setOnAction(event -> {
@@ -200,7 +197,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     /**
      * Creates the center GridPane that represents the game board.
      */
-
     public void makeBoard() {
         center = new GridPane();
         center.setAlignment(Pos.CENTER);
@@ -211,8 +207,8 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         for (int row = 0; row < dimensions; row++) {
             for (int col = 0; col < dimensions; col++) {
                 Button button = new Button();
-                button.setPrefWidth(HEIGHT/dimensions);
-                button.setPrefHeight(HEIGHT/dimensions);
+                button.setPrefWidth(SIZE/dimensions);
+                button.setPrefHeight(SIZE/dimensions);
                 buttons[row][col] = button;
                 center.add(button, col, row);
             }
@@ -224,7 +220,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * have a green disk, a blue disk, a blocker, or be a hole.
      */
     private void setBoard(){
-        BackgroundSize size = new BackgroundSize(HEIGHT/dimensions, HEIGHT/dimensions,
+        BackgroundSize size = new BackgroundSize(SIZE/dimensions, SIZE/dimensions,
                 true, true, true, false);
         for(int rows = 0; rows<dimensions; rows++){
             for (int cols = 0; cols<dimensions; cols++){
@@ -259,10 +255,10 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * Used to load in game boards.
      * @param file the file to be read
      */
-
-    public void loadFile(String file){
-        String shortenedFilename = file.substring(file.lastIndexOf(File.separator)+1);
-        this.filename = shortenedFilename;
+    public void loadFile(File file){
+        String shortenedFilename = file.getAbsolutePath().substring
+                (file.getAbsolutePath().lastIndexOf(File.separator)+1);
+        shortFilename = shortenedFilename;
         model.loadBoardFile(file);
         if (model.getCurrentConfig()!=null) {
             dimensions = model.getCurrentConfig().getDimensions();
@@ -276,16 +272,13 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     public void chooseFile(Stage stage){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load a game board");
-        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
-        currentPath += File.separator + "data" + File.separator + "tilt";
-        String path = System.getProperty("user.dir")+"/data/tilt";
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")+"/data/tilt"));
-       // fileChooser.setInitialDirectory(new File(currentPath));
         fileChooser.getExtensionFilters().addAll
                 (new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.lob"));
         File selectedFile = fileChooser.showOpenDialog(stage);
-        String shortenedFilename = currentPath.substring(currentPath.lastIndexOf(File.separator) + 1);
-        filename = shortenedFilename;
+        String shortenedFilename = selectedFile.getAbsolutePath().substring
+                (selectedFile.getAbsolutePath().lastIndexOf(File.separator) + 1);
+        shortFilename = shortenedFilename;
         model.loadBoardFile(selectedFile);
         if(model.getCurrentConfig()!=null) {
             dimensions = model.getCurrentConfig().getDimensions();
@@ -295,10 +288,10 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     @Override
     public void update(TiltModel tiltModel, String message) {
         if(message.startsWith(TiltModel.LOADED)){
-            text.setText("Loaded: " + filename);
+            text.setText("Loaded: " + shortFilename);
         }
         else if (message.startsWith(TiltModel.LOAD_FAILED)){
-            text.setText("Failed to load: " + filename);
+            text.setText("Failed to load: " + shortFilename);
             if(model.getCurrentConfig()==null){ // trying to launch the gui with a null config
                 System.out.println(message);
                 System.exit(1);
@@ -329,6 +322,11 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
             }
         }
     }
+
+    /**
+     * Launches the GUI if the correct number of command line arguments are present.
+     * @param args [0] the Tilt board filename
+     */
 
     public static void main(String[] args) {
         if (args.length != 1) {

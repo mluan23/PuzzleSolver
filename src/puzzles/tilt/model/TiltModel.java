@@ -8,6 +8,10 @@ import puzzles.tilt.solver.Tilt;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Creates the game rules for Tilt.
+ */
+
 public class TiltModel {
     /** the collection of observers of this model */
     private final List<Observer<TiltModel, String>> observers = new LinkedList<>();
