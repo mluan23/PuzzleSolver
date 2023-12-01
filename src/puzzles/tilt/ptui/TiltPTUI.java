@@ -7,15 +7,25 @@ import puzzles.tilt.model.TiltModel;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The TUI representation for Tilt.
+ */
+
 
 public class TiltPTUI implements Observer<TiltModel, String> {
+    /** the model */
     private TiltModel model;
+    /** allows for user input */
     private Scanner scan;
     public TiltPTUI(){
         model = new TiltModel();
         model.addObserver(this);
         scan = new Scanner(System.in);
     }
+
+    /**
+     * Prints the five options the user has while playing the game.
+     */
     private void help(){
         System.out.println("h(int)              -- hint next move");
         System.out.println("l(oad) filename     -- load new puzzle file");
@@ -23,6 +33,12 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         System.out.println("q(uit)              -- quit the current game");
         System.out.println("r(eset)             -- reset the current game");
     }
+
+    /**
+     * The gameloop for the TUI that keeps getting user input until the user quits.
+     * @param file the file for the game board
+     * @throws IOException if the file cannot be found
+     */
     private void gameLoop(String file) throws IOException{
         model.loadBoardFile(file);
         if(model.getCurrentConfig()==null){
@@ -95,7 +111,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         }
         else if(message.startsWith(TiltModel.MOVE)){
             if(model.getCurrentConfig()!=null) {
-                System.out.println("\n" + model.getCurrentConfig() + "\n");
+                System.out.println(model.getCurrentConfig() + "\n");
             }
         }
         else if(message.equals(TiltModel.ILLEGAL)){

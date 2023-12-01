@@ -29,6 +29,11 @@ public class TiltConfig implements Configuration {
         }
     }
 
+    /**
+     * The given TiltConfig is a solution if there are no green disks.
+     * @return true if the config is a solution, false otherwise
+     */
+
     @Override
     public boolean isSolution() {
         for (int row = 0; row < this.DIM; row++) {
@@ -40,24 +45,91 @@ public class TiltConfig implements Configuration {
         }
         return true;
     }
-    public TiltConfig up(){
+
+    /**
+     * Gives the config if the board were to be tilted in the given direction, only if it does not result in a blue
+     * disk falling into the hole.
+     * @return the config for the direction the board was tilted in or null if the move is illegal
+     */
+    public TiltConfig move(String direction){
         int rows;
         int cols;
-        for(int r = 1; r<DIM; r++){
-            for(int c = 0; c < DIM; c++){
-                rows = r;
-                cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
-                    char marker = this.board[r][c];
-                    while(rows-1 >= 0 && board[rows-1][cols] == '.' ){
-                        rows--;
+        if(direction.equals("north")) {
+            for (int r = 1; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                    rows = r;
+                    cols = c;
+                    if (this.board[r][c] == 'G' || this.board[r][c] == 'B') {
+                        char marker = this.board[r][c];
+                        while (rows - 1 >= 0 && board[rows - 1][cols] == '.') {
+                            rows--;
+                        }
+                        if (rows - 1 >= 0 && this.board[rows - 1][cols] == 'O') { // the slider fell into the hole
+                            this.board[r][c] = '.';
+                        } else if (r != rows) {
+                            this.board[r][c] = '.';
+                            this.board[rows][c] = marker;
+                        }
                     }
-                    if (rows-1 >= 0&& this.board[rows - 1][cols] == 'O') { // the slider fell into the hole
-                        this.board[r][c] = '.';
+                }
+            }
+        } else if (direction.equals("east")) {
+            for(int c = DIM-2; c >= 0 ; c--){
+                for(int r = 0; r < DIM ; r++){
+                    rows = r;
+                    cols = c;
+                    if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
+                        char marker = this.board[r][c];
+                        while(cols+1 < DIM && board[rows][cols+1] == '.' ){
+                            cols++;
+                        }
+                        if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
+                            this.board[r][c] = '.';
+                        }
+                        else if(c!=cols){
+                            this.board[r][c] = '.';
+                            this.board[r][cols] = marker;
+                        }
                     }
-                    else if(r!=rows){
-                        this.board[r][c] = '.';
-                        this.board[rows][c] = marker;
+                }
+            }
+        } else if (direction.equals("south")) {
+            for(int r = DIM-2; r>=0; r--){
+                for(int c = 0; c < DIM; c++){
+                    rows = r;
+                    cols = c;
+                    if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
+                        char marker = this.board[r][c];
+                        while(rows+1 < DIM && board[rows+1][cols] == '.' ){
+                            rows++;
+                        }
+                        if (rows+1<DIM && this.board[rows + 1][cols] == 'O') {
+                            this.board[r][c] = '.';
+                        }
+                        else if(r!=rows){
+                            this.board[r][c] = '.';
+                            this.board[rows][c] = marker;
+                        }
+                    }
+                }
+            }
+        } else if (direction.equals("west")) {
+            for(int c = 1; c<DIM; c++){
+                for(int r = 0; r < DIM; r++){
+                    rows = r;
+                    cols = c;
+                    if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
+                        char marker = this.board[r][c];
+                        while(cols-1 >= 0 && board[rows][cols-1] == '.' ){
+                            cols--;
+                        }
+                        if (cols-1 >= 0 && this.board[rows][cols-1] == 'O') {
+                            this.board[r][c] = '.';
+                        }
+                        else if(c!=cols){
+                            this.board[r][c] = '.';
+                            this.board[r][cols] = marker;
+                        }
                     }
                 }
             }
@@ -70,129 +142,49 @@ public class TiltConfig implements Configuration {
         this.reset();
         return null;
     }
-    public TiltConfig right(){
-        int rows;
-        int cols;
-        for(int c = DIM-2; c >= 0 ; c--){
-            for(int r = 0; r < DIM ; r++){
-                rows = r;
-                cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
-                    char marker = this.board[r][c];
-                    while(cols+1 < DIM && board[rows][cols+1] == '.' ){
-                        cols++;
-                    }
-                    if (cols+1<DIM && this.board[rows][cols + 1] == 'O') {
-                        this.board[r][c] = '.';
-                    }
-                    else if(c!=cols){
-                        this.board[r][c] = '.';
-                        this.board[r][cols] = marker;
-                    }
-                }
-            }
-        }
-        if(countBlue()==blueCount) {
-            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
-            this.reset();
-            return next;
-        }
-        this.reset();
-        return null;
-    }
-    public TiltConfig down(){
-        int rows;
-        int cols;
-        for(int r = DIM-2; r>=0; r--){
-            for(int c = 0; c < DIM; c++){
-                rows = r;
-                cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
-                    char marker = this.board[r][c];
-                    while(rows+1 < DIM && board[rows+1][cols] == '.' ){
-                        rows++;
-                    }
-                    if (rows+1<DIM && this.board[rows + 1][cols] == 'O') {
-                        this.board[r][c] = '.';
-                    }
-                    else if(r!=rows){
-                        this.board[r][c] = '.';
-                        this.board[rows][c] = marker;
-                    }
-                }
-            }
-        }
-        if(countBlue()==blueCount) {
-            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
-            this.reset();
-            return next;
-        }
-        this.reset();
-        return null;
-    }
-    public TiltConfig left(){
-        int rows;
-        int cols;
-        for(int c = 1; c<DIM; c++){
-            for(int r = 0; r < DIM; r++){
-                rows = r;
-                cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
-                    char marker = this.board[r][c];
-                    while(cols-1 >= 0 && board[rows][cols-1] == '.' ){
-                        cols--;
-                    }
-                    if (cols-1 >= 0 && this.board[rows][cols-1] == 'O') {
-                        this.board[r][c] = '.';
-                    }
-                    else if(c!=cols){
-                        this.board[r][c] = '.';
-                        this.board[r][cols] = marker;
-                    }
-                }
-            }
-        }
-        if(countBlue()==blueCount) {
-            TiltConfig next = new TiltConfig(DIM, this.board, blueCount);
-            this.reset();
-            return next;
-        }
-        this.reset();
-        return null;
-    }
+    /**
+     * Creates a copy array using the original config.
+     */
     private void reset(){
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
     }
 
+    /**
+     * Gives the neighbors of a given config.
+     * @return an ArrayList of the neighbors
+     */
+
     @Override
     public Collection<Configuration> getNeighbors() {
-        if (this.right() != null) {
-            neighbors.add(this.right());
+        if (this.move("east") != null) {
+            neighbors.add(this.move("east"));
         }
-        if (this.down() != null) {
-            neighbors.add(this.down());
+        if (this.move("south") != null) {
+            neighbors.add(this.move("south"));
         }
-        if (this.up() != null) {
-            neighbors.add(this.up());
+        if (this.move("north") != null) {
+            neighbors.add(this.move("north"));
         }
-        if (this.left() != null) {
-            neighbors.add(this.left());
+        if (this.move("west") != null) {
+            neighbors.add(this.move("west"));
         }
         return neighbors;
     }
+
+    /**
+     * Gives the dimensions of the board.
+     * @return DIM
+     */
     public int getDimensions(){
         return DIM;
     }
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof TiltConfig){
-            TiltConfig config = (TiltConfig) other;
-            return Arrays.deepEquals(this.board, config.board);
-        }
-        return false;
-    }
+
+    /**
+     * Counts the number of blue disks on a board.
+     * @return the number of blue disks
+     */
     public int countBlue(){
         int count = 0;
         for(int row = 0; row<DIM;row++){
@@ -204,8 +196,27 @@ public class TiltConfig implements Configuration {
         }
         return count;
     }
+
+    /**
+     * Gives the board of the current config.
+     * @return the board
+     */
     public char[][] getBoard(){
         return this.board;
+    }
+
+    /**
+     * Two TiltConfigs are equal if their boards are equal.
+     * @param other the other config to compare to
+     * @return true if the configs are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof TiltConfig){
+            TiltConfig config = (TiltConfig) other;
+            return Arrays.deepEquals(this.board, config.board);
+        }
+        return false;
     }
 
     @Override

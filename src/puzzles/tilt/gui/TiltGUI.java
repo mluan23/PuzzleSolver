@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import puzzles.common.Observer;
-import puzzles.tilt.model.TiltConfig;
 import puzzles.tilt.model.TiltModel;
 
 import javafx.application.Application;
@@ -17,8 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class TiltGUI extends Application implements Observer<TiltModel, String> {
     /** The resources directory is located directly underneath the gui package */
@@ -48,19 +47,28 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private final double WIDTH = 550;
     /** the GridPane that represents the game board */
     private GridPane center;
+    private String filename = "";
 
     /**
      *
-     * @throws IOException if the initial file to load the board cannot be found
+     *
      */
 
-    public void init() throws IOException{
+    public void init() {
         String filename = getParameters().getRaw().get(0);
         this.model = new TiltModel();
         model.addObserver(this);
         loadFile(filename);
     }
-    private Button button(String direction, String symbol, double value){
+
+    /**
+     * Creates an arrow button for tilting.
+     * @param direction the direction to be tilted in
+     * @param symbol the symbol that is on the face of the button
+     * @param value the amount to multiply the button height or width by to set its size
+     * @return the arrow button
+     */
+    private Button arrows(String direction, String symbol, double value){
         Button arrow = new Button(symbol);
         arrow.setOnAction(event -> {
             if(!model.gameOver()) {
@@ -77,17 +85,27 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         arrow.setAlignment(Pos.CENTER);
         return arrow;
     }
+
+    /**
+     * Creates an HBox that is centered.
+     * @return the HBox
+     */
     private HBox box(){
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER);
         return box;
     }
+
+    /**
+     * Creates the inner BorderPane with the game board and arrow buttons.
+     * @return the inner BorderPane
+     */
     private BorderPane inner(){
         BorderPane inner = new BorderPane();
-        Button upArrow = button("north","^",.8);
-        Button downArrow = button("south","V",.8);
-        Button rightArrow = button("east",">",.78);
-        Button leftArrow = button("west","<",.78);
+        Button upArrow = arrows("north","^",.8);
+        Button downArrow = arrows("south","V",.8);
+        Button rightArrow = arrows("east",">",.78);
+        Button leftArrow = arrows("west","<",.78);
         HBox upBox = box();
         HBox downBox = box();
         HBox rightBox = box();
@@ -109,6 +127,15 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         BorderPane.setMargin(leftBox,new Insets(0,9,0,0));
         return inner;
     }
+
+    /**
+     * Creates the GUI.
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     * @throws Exception if there is trouble creating something
+     */
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -145,22 +172,27 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         stage.show();
     }
 
+    /**
+     * Creates the loading button.
+     * @param stage the stage that choosing a file will be shown in
+     * @param inner the inner BorderPane
+     * @return the loading button
+     */
+
     private Button loadButton(Stage stage, BorderPane inner) {
         Button load = new Button("Load");
         load.setOnAction(event -> {
-                    try{
-                        chooseFile(stage);
-                        if(model.getCurrentConfig()!=null) {
-                            makeBoard();
-                            setBoard();
-                            inner.setCenter(center);
-                        }
-                    }
-                    catch (IOException e){
-                    }
-                    catch (NullPointerException e){
-                        text.setText("No file chosen");
-                    }
+            try {
+                chooseFile(stage);
+                if(model.getCurrentConfig()!=null) {
+                    makeBoard();
+                    setBoard();
+                    inner.setCenter(center);
+                }
+            }
+            catch (NullPointerException e){
+                text.setText("No file chosen!");
+            }
         });
         return load;
     }
@@ -226,10 +258,11 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     /**
      * Used to load in game boards.
      * @param file the file to be read
-     * @throws IOException if the file cannot be found
      */
 
-    public void loadFile(String file) throws IOException {
+    public void loadFile(String file){
+        String shortenedFilename = file.substring(file.lastIndexOf(File.separator)+1);
+        this.filename = shortenedFilename;
         model.loadBoardFile(file);
         if (model.getCurrentConfig()!=null) {
             dimensions = model.getCurrentConfig().getDimensions();
@@ -238,16 +271,21 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
 
     /**
      * Allows the user to choose a game board to be loaded in.
-     * @param stage
-     * @throws IOException
+     * @param stage the stage in which the file choosing is shown
      */
-    public void chooseFile(Stage stage) throws IOException{
+    public void chooseFile(Stage stage){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load a game board");
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        currentPath += File.separator + "data" + File.separator + "tilt";
+        String path = System.getProperty("user.dir")+"/data/tilt";
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")+"/data/tilt"));
+       // fileChooser.setInitialDirectory(new File(currentPath));
         fileChooser.getExtensionFilters().addAll
                 (new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.lob"));
         File selectedFile = fileChooser.showOpenDialog(stage);
+        String shortenedFilename = currentPath.substring(currentPath.lastIndexOf(File.separator) + 1);
+        filename = shortenedFilename;
         model.loadBoardFile(selectedFile);
         if(model.getCurrentConfig()!=null) {
             dimensions = model.getCurrentConfig().getDimensions();
@@ -257,10 +295,10 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     @Override
     public void update(TiltModel tiltModel, String message) {
         if(message.startsWith(TiltModel.LOADED)){
-            text.setText(message);
+            text.setText("Loaded: " + filename);
         }
         else if (message.startsWith(TiltModel.LOAD_FAILED)){
-            text.setText(message);
+            text.setText("Failed to load: " + filename);
             if(model.getCurrentConfig()==null){ // trying to launch the gui with a null config
                 System.out.println(message);
                 System.exit(1);

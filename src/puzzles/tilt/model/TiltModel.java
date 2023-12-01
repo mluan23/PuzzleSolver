@@ -34,12 +34,17 @@ public class TiltModel {
     public static String ILLEGAL = "Illegal move. A blue slider will fall through the hole!";
     /** the message that indicates the board is reset */
     public static String RESET = "Puzzle reset!";
+    /** the representation of the game board */
     private char[][] board;
     public TiltModel(){
         currentConfig = null;
         finishedConfig = null;
         originalConfig = null;
     }
+
+    /**
+     * Gives the next config in the solution path. Used for giving hints.
+     */
 
     public void getHint(){
         Tilt tilt = new Tilt();
@@ -70,15 +75,18 @@ public class TiltModel {
     }
 
     /**
-     *
-     * @param file
-     * @return
-     * @throws IOException
+     * Loads the board from a given filename.
+     * @param file the file to load from
      */
-    public void loadBoardFile(String file) throws IOException{
+    public void loadBoardFile(String file) {
         loadBoardFile(new File(file));
     }
-    public void loadBoardFile(File file) throws IOException {
+
+    /**
+     * Loads the board from a given file.
+     * @param file the file to load from
+     */
+    public void loadBoardFile(File file) {
         try(BufferedReader in = new BufferedReader(new FileReader(file))){
             int r = 0;
             int blueCount = 0;
@@ -107,7 +115,7 @@ public class TiltModel {
             currentConfig = t;
             alertObservers(LOADED + file);
         }
-        catch (NumberFormatException | FileNotFoundException e ){
+        catch (NumberFormatException | IOException e ){
             alertObservers(LOAD_FAILED + file);
         }
     }
@@ -121,15 +129,15 @@ public class TiltModel {
     public TiltConfig makeMove(String direction){
         TiltConfig move = currentConfig;
         if(direction.equals("north")){
-            move = currentConfig.up();
+            move = currentConfig.move("north");
         } else if (direction.equals("south")) {
-            move = currentConfig.down();
+            move = currentConfig.move("south");
 
         }  else if (direction.equals("east")) {
-            move = currentConfig.right();
+            move = currentConfig.move("east");
 
         }  else if (direction.equals("west")) {
-            move = currentConfig.left();
+            move = currentConfig.move("west");
         }
         if(move!=null) {
             currentConfig = move;

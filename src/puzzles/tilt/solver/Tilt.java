@@ -11,14 +11,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CSAPX Project 2-2: Tilt Puzzle
+ * Using a common BFS solver, solves the Tilt Puzzle.
+ *
+ * Main class for Tilt Puzzle.
+ *
+ * @author Matthew Luan
+ */
+
 public class Tilt {
+    /** the solution path for a given configuration */
     private List<Configuration> path;
+    /** the Solver that solves the puzzle */
     private Solver solver;
 
     public Tilt() {
         path = new ArrayList<>();
         solver = new Solver();
     }
+
+    /**
+     * Solves the given configuration.
+     * @param current the configuration to solve
+     * @return the solution path if it exists, null if there is no solution
+     */
 
     public List<Configuration> solveConfig(TiltConfig current) {
         try {
@@ -29,7 +46,13 @@ public class Tilt {
         return path;
     }
 
-    public TiltConfig readFile(String filename) throws IOException {
+    /**
+     *
+     * @param filename
+     * @return
+     */
+
+    public TiltConfig readFile(String filename) {
         try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
             int blueCount = 0;
             int r = 0;
@@ -49,14 +72,20 @@ public class Tilt {
             }
             return new TiltConfig(dimensions, board, blueCount);
         }
-        catch(FileNotFoundException fnfe){
+        catch(IOException e){
             System.out.println(filename + " not found!");
             System.exit(0);
         }
         return null;
     }
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * Run an instance of the Tilt puzzle.
+     *
+     * @param args [0] the file to load the puzzle from
+     */
+
+    public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java Tilt filename");
         } else {
