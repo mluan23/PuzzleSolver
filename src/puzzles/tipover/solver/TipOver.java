@@ -24,7 +24,7 @@ public class TipOver {
     }
 
     public TipOverConfig readFile(String file) throws IOException {
-        try (BufferedReader input = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader input = new BufferedReader(new FileReader(file))) {
             String dim = input.readLine();
             String[] dimensions = dim.split("\\s+");
             int row = Integer.parseInt(dimensions[0]);
