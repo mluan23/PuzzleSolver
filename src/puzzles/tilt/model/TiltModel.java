@@ -6,10 +6,7 @@ import puzzles.common.solver.Solver;
 import puzzles.tilt.solver.Tilt;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class TiltModel {
     /** the collection of observers of this model */
@@ -17,16 +14,26 @@ public class TiltModel {
 
     /** the current configuration */
     private TiltConfig currentConfig;
+    /** the configuration to represent to starting configuration of a given file */
     private TiltConfig originalConfig;
+    /** the configuration to represent the solution to a solved puzzle */
     private TiltConfig finishedConfig;
+    /** the message that indicates a board has successfully been loaded */
     public static String LOADED = "Loaded: ";
-    public static String HINT_PREFIX = "Next step! \n";
+    /** the message that indicates a hint is given */
+    public static String HINT = "Next step! \n";
+    /** the message that indicates the board was not loaded */
     public static String LOAD_FAILED = "Failed to load: ";
+    /** the message that indicates there is no solution to the puzzle */
     public static String NO_SOLUTION = "No solution! \n";
+    /** the message that indicates a board has been solved */
     public static String FINISHED = "Already solved!";
+    /** the message that indicates a move has been made */
     public static String MOVE = "Tilted";
+    /** the message that indicates the move being made is illegal */
     public static String ILLEGAL = "Illegal move. A blue slider will fall through the hole!";
-    public static String RESET = "Puzzle Reset! \n";
+    /** the message that indicates the board is reset */
+    public static String RESET = "Puzzle reset!";
     private char[][] board;
     public TiltModel(){
         currentConfig = null;
@@ -39,14 +46,13 @@ public class TiltModel {
         try {
             List<Configuration> path = new ArrayList<>(tilt.solveConfig(currentConfig));
             Configuration finished = path.get(0);
-            TiltConfig finish = (TiltConfig) finished;
-            finishedConfig = finish;
+            finishedConfig = (TiltConfig) finished;
             Configuration n = path.get(1);
             TiltConfig next = (TiltConfig) n;
-            currentConfig = next;
-            alertObservers(HINT_PREFIX + next);
+            currentConfig = (TiltConfig) n;
+            alertObservers(HINT + next);
         }
-        catch (NullPointerException npe){
+        catch (NullPointerException npe){ // solving returns null when no solution
             alertObservers(NO_SOLUTION + currentConfig + "\n");
         }
         catch (IndexOutOfBoundsException e){
@@ -54,19 +60,30 @@ public class TiltModel {
             currentConfig = finishedConfig;
         }
     }
+
+    /**
+     * Resets the game board by changing the current config to the starting config.
+     */
     public void reset(){
         currentConfig = originalConfig;
         alertObservers(RESET);
     }
-    public TiltConfig loadBoardFile(String file) throws IOException{
-        return loadBoardFile(new File(file));
+
+    /**
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public void loadBoardFile(String file) throws IOException{
+        loadBoardFile(new File(file));
     }
-    public TiltConfig loadBoardFile(File file) throws IOException {
+    public void loadBoardFile(File file) throws IOException {
         try(BufferedReader in = new BufferedReader(new FileReader(file))){
             int r = 0;
             int blueCount = 0;
-            String f = in.readLine();
-            int dimensions = Integer.parseInt(f);
+            String dim = in.readLine();
+            int dimensions = Integer.parseInt(dim);
             this.board = new char[dimensions][dimensions];
             String line;
             while((line = in.readLine()) != null){
@@ -81,21 +98,26 @@ public class TiltModel {
                     }
                     else{
                         alertObservers(LOAD_FAILED);
-                        return null;
                     }
                 }
                 r++;
             }
             TiltConfig t = new TiltConfig(dimensions,this.board, blueCount);
             originalConfig = t;
+            currentConfig = t;
             alertObservers(LOADED + file);
-            return t;
         }
-        catch (FileNotFoundException fnfe){
+        catch (NumberFormatException | FileNotFoundException e ){
             alertObservers(LOAD_FAILED + file);
         }
-        return null;
     }
+
+
+    /**
+     * Allows the user to tilt the board in one of four directions.
+     * @param direction the direction to be tilted in
+     * @return the TiltConfig representing the board after it was tilted
+     */
     public TiltConfig makeMove(String direction){
         TiltConfig move = currentConfig;
         if(direction.equals("north")){
@@ -118,20 +140,38 @@ public class TiltModel {
         }
         return move;
     }
+
+    /**
+     * Sets the current config to a given config.
+     * @param config the config to be set equal to
+     */
     public void setCurrentConfig(TiltConfig config){
         this.currentConfig = config;
     }
+
+    /**
+     * Gives the current config.
+     * @return currentConfig
+     */
     public TiltConfig getCurrentConfig(){
         return this.currentConfig;
     }
+
+    /**
+     * Gives the starting config.
+     * @return originalConfig
+     */
     public TiltConfig getOriginalConfig(){
         return originalConfig;
     }
+
+    /**
+     * The game is over when the current config is a solution.
+     * @return true if the current config is a solution, false otherwise
+     */
     public boolean gameOver(){
         return this.currentConfig.isSolution();
     }
-
-
 
     /**
      * The view calls this to add itself as an observer.

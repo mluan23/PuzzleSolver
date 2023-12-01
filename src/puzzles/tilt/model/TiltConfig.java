@@ -47,7 +47,7 @@ public class TiltConfig implements Configuration {
             for(int c = 0; c < DIM; c++){
                 rows = r;
                 cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // up option
+                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
                     char marker = this.board[r][c];
                     while(rows-1 >= 0 && board[rows-1][cols] == '.' ){
                         rows--;
@@ -77,7 +77,7 @@ public class TiltConfig implements Configuration {
             for(int r = 0; r < DIM ; r++){
                 rows = r;
                 cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // right option
+                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
                     char marker = this.board[r][c];
                     while(cols+1 < DIM && board[rows][cols+1] == '.' ){
                         cols++;
@@ -107,7 +107,7 @@ public class TiltConfig implements Configuration {
             for(int c = 0; c < DIM; c++){
                 rows = r;
                 cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // down option
+                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
                     char marker = this.board[r][c];
                     while(rows+1 < DIM && board[rows+1][cols] == '.' ){
                         rows++;
@@ -137,7 +137,7 @@ public class TiltConfig implements Configuration {
             for(int r = 0; r < DIM; r++){
                 rows = r;
                 cols = c;
-                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){ // left option
+                if(this.board[r][c] == 'G' || this.board[r][c] == 'B'){
                     char marker = this.board[r][c];
                     while(cols-1 >= 0 && board[rows][cols-1] == '.' ){
                         cols--;
@@ -160,7 +160,7 @@ public class TiltConfig implements Configuration {
         this.reset();
         return null;
     }
-    public void reset(){
+    private void reset(){
         for (int row = 0; row<DIM; row++){
             System.arraycopy(original[row],0,this.board[row],0,DIM);
         }
@@ -168,14 +168,14 @@ public class TiltConfig implements Configuration {
 
     @Override
     public Collection<Configuration> getNeighbors() {
-        if (this.up() != null) {
-            neighbors.add(this.up());
-        }
         if (this.right() != null) {
             neighbors.add(this.right());
         }
         if (this.down() != null) {
             neighbors.add(this.down());
+        }
+        if (this.up() != null) {
+            neighbors.add(this.up());
         }
         if (this.left() != null) {
             neighbors.add(this.left());
@@ -189,15 +189,9 @@ public class TiltConfig implements Configuration {
     public boolean equals(Object other) {
         if (other instanceof TiltConfig){
             TiltConfig config = (TiltConfig) other;
-            for(int r = 0; r<DIM; r++){
-                for(int c = 0; c<DIM; c++){
-                    if(this.board[r][c] != config.board[r][c]){
-                        return false;
-                    }
-                }
-            }
+            return Arrays.deepEquals(this.board, config.board);
         }
-        return true;
+        return false;
     }
     public int countBlue(){
         int count = 0;

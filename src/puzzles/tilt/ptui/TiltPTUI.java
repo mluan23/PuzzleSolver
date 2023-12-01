@@ -16,15 +16,15 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         model.addObserver(this);
         scan = new Scanner(System.in);
     }
-    public void help(){
+    private void help(){
         System.out.println("h(int)              -- hint next move");
         System.out.println("l(oad) filename     -- load new puzzle file");
         System.out.println("t(ilt) {N|S|E|W}    -- tilt the board in the given direction");
         System.out.println("q(uit)              -- quit the current game");
         System.out.println("r(eset)             -- reset the current game");
     }
-    public void gameLoop(String file) throws IOException{
-        model.setCurrentConfig(model.loadBoardFile(file));
+    private void gameLoop(String file) throws IOException{
+        model.loadBoardFile(file);
         if(model.getCurrentConfig()==null){
             return;
         }
@@ -49,13 +49,10 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                     help();
                 }
                 else {
-                    if (options[0].equalsIgnoreCase("l") || command.equalsIgnoreCase("load")){
-                        TiltConfig t = model.loadBoardFile(options[1]);
-                        if (t != null) {
-                            model.setCurrentConfig(t);
-                        }
-                    } else {
-                        if (options[1].equalsIgnoreCase("n")) {
+                        if (options[0].equalsIgnoreCase("l") ||
+                                command.equalsIgnoreCase("load")) {
+                            model.loadBoardFile(options[1]);
+                        } else if (options[1].equalsIgnoreCase("n")) {
                             next = model.makeMove("north");
                         } else if (options[1].equalsIgnoreCase("s")) {
                             next = model.makeMove("south");
@@ -74,7 +71,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                 }
             }
         }
-    }
+
 
     @Override
     public void update(TiltModel model, String message) {
@@ -87,7 +84,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                 System.out.println(this.model.getCurrentConfig());
             }
         }
-        else if (message.startsWith(TiltModel.HINT_PREFIX)){
+        else if (message.startsWith(TiltModel.HINT)){
             System.out.println(message + "\n");
         }
         else if (message.startsWith(TiltModel.NO_SOLUTION)){
@@ -105,13 +102,8 @@ public class TiltPTUI implements Observer<TiltModel, String> {
             System.out.println(message + "\n" + model.getCurrentConfig() + "\n");
         }
         else if(message.equals(TiltModel.RESET)){
-            System.out.println(message + model.getCurrentConfig() + "\n");
+            System.out.println(message + "\n" + model.getCurrentConfig() + "\n");
         }
-//        if(model.getCurrentConfig()!=null) {
-//            if (model.gameOver()) {
-//                System.out.println("You win!");
-//            }
-//        }
     }
 
     public static void main(String[] args) throws IOException{

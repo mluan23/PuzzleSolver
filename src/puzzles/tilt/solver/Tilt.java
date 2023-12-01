@@ -5,6 +5,7 @@ import puzzles.common.solver.Solver;
 import puzzles.tilt.model.TiltConfig;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,19 +13,11 @@ import java.util.List;
 
 public class Tilt {
     private List<Configuration> path;
-    private TiltConfig con;
     private Solver solver;
 
     public Tilt() {
         path = new ArrayList<>();
         solver = new Solver();
-    }
-
-    public char[][] getBoard() {
-        return con.getBoard();
-    }
-    public TiltConfig getConfig(){
-        return this.con;
     }
 
     public List<Configuration> solveConfig(TiltConfig current) {
@@ -56,6 +49,11 @@ public class Tilt {
             }
             return new TiltConfig(dimensions, board, blueCount);
         }
+        catch(FileNotFoundException fnfe){
+            System.out.println(filename + " not found!");
+            System.exit(0);
+        }
+        return null;
     }
 
     public static void main(String[] args) throws IOException {
