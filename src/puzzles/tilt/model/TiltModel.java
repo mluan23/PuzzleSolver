@@ -9,13 +9,13 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Creates the game rules for Tilt.
+ * The class representing the model for the GUI and PTUI in the MVC pattern. It has the methods for the game
+ * functionality.
  */
 
 public class TiltModel {
     /** the collection of observers of this model */
     private final List<Observer<TiltModel, String>> observers = new LinkedList<>();
-
     /** the current configuration */
     private TiltConfig currentConfig;
     /** the configuration to represent to starting configuration of a given file */
@@ -40,6 +40,10 @@ public class TiltModel {
     public static String RESET = "Puzzle reset!";
     /** the representation of the game board */
     private char[][] board;
+
+    /**
+     * Creates a TiltModel. Sets all configurations to null.
+     */
     public TiltModel(){
         currentConfig = null;
         finishedConfig = null;
@@ -49,7 +53,6 @@ public class TiltModel {
     /**
      * Gives the next config in the solution path. Used for giving hints.
      */
-
     public void getHint(){
         Tilt tilt = new Tilt();
         try {

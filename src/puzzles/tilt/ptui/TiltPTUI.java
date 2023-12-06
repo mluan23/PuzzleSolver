@@ -86,14 +86,11 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         }
 
     /**
-     * This method is called when making an action that would
-     * @param model the object that wishes to inform this object
-     *                about something that has happened.
-     * @param message optional data the server.model can send to the observer
-     *
+     * This method is called when a change is made to the model. Observers are alerted of the change and are updated
+     * to reflect the change.
+     * @param model the model being observed
+     * @param message the message the model sends to observers
      */
-
-
     @Override
     public void update(TiltModel model, String message) {
         if(message.startsWith(TiltModel.LOADED)){
@@ -128,10 +125,9 @@ public class TiltPTUI implements Observer<TiltModel, String> {
     }
 
     /**
-     * Creates tui and runs the gameloop.
+     * Creates a TUI and runs the gameloop.
      * @param args [0] the filename
      */
-
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java TiltPTUI filename");

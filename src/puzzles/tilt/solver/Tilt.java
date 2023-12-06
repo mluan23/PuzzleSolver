@@ -5,7 +5,6 @@ import puzzles.common.solver.Solver;
 import puzzles.tilt.model.TiltConfig;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
  * CSAPX Project 2-2: Tilt Puzzle
  * Using a common BFS solver, solves the Tilt Puzzle.
  *
- * Main class for Tilt Puzzle.
+ * Main class for the Tilt Puzzle.
  *
  * @author Matthew Luan
  */
@@ -26,6 +25,9 @@ public class Tilt {
     /** the Solver that solves the puzzle */
     private Solver solver;
 
+    /**
+     * Creates a new Tilt object. Used for solving puzzles.
+     */
     public Tilt() {
         path = new ArrayList<>();
         solver = new Solver();
@@ -36,7 +38,6 @@ public class Tilt {
      * @param current the configuration to solve
      * @return the solution path if it exists, null if there is no solution
      */
-
     public List<Configuration> solveConfig(TiltConfig current) {
         try {
             path.addAll(solver.solve(current));
@@ -47,9 +48,10 @@ public class Tilt {
     }
 
     /**
-     *
-     * @param filename
-     * @return
+     * Reads the given file. Creates a TiltConfig based on the file.
+     * @param filename the name of the file
+     * @return the starting TiltConfig based on the file, if the file is valid; returns null if
+     * the file is not valid
      */
 
     public TiltConfig readFile(String filename) {
@@ -84,7 +86,6 @@ public class Tilt {
      *
      * @param args [0] the file to load the puzzle from
      */
-
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java Tilt filename");
