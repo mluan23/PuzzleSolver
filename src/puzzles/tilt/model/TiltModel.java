@@ -131,9 +131,8 @@ public class TiltModel {
     /**
      * Allows the user to tilt the board in one of four directions.
      * @param direction the direction to be tilted in
-     * @return the TiltConfig representing the board after it was tilted
      */
-    public TiltConfig makeMove(String direction){
+    public void makeMove(String direction){
         TiltConfig move = currentConfig;
         if(direction.equals("north")){
             move = currentConfig.move("north");
@@ -147,13 +146,14 @@ public class TiltModel {
             move = currentConfig.move("west");
         }
         if(move!=null) {
-            currentConfig = move;
+            if(!gameOver()) {
+                currentConfig = move;
+            }
             alertObservers(MOVE);
         }
         else{
             alertObservers(ILLEGAL);
         }
-        return move;
     }
 
     /**

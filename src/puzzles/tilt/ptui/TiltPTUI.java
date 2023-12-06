@@ -56,7 +56,6 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                 model.reset();
             }
             else{
-                TiltConfig next = null;
                 String[] options = command.split("\\s+");
                 if(options.length!=2){
                     help();
@@ -65,20 +64,18 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                         if (options[0].equalsIgnoreCase("l") ||
                                 command.equalsIgnoreCase("load")) {
                             model.loadBoardFile(options[1]);
+
                         } else if (options[1].equalsIgnoreCase("n")) {
-                            next = model.makeMove("north");
+                            model.makeMove("north");
                         } else if (options[1].equalsIgnoreCase("s")) {
-                            next = model.makeMove("south");
+                            model.makeMove("south");
                         } else if (options[1].equalsIgnoreCase("e")) {
-                            next = model.makeMove("east");
+                            model.makeMove("east");
                         } else if (options[1].equalsIgnoreCase("w")) {
-                            next = model.makeMove("west");
+                            model.makeMove("west");
                         } else {
                             System.out.println();
                             help();
-                        }
-                        if (next != null) {
-                            model.setCurrentConfig(next);
                         }
                     }
                 }
