@@ -19,6 +19,13 @@ public class TiltConfig implements Configuration {
     /** the number of blue disks on the board */
     private int blueCount;
 
+    /**
+     * Creates a TiltConfig, with two copies of the board being made.
+     * @param dimensions the dimensions of the board
+     * @param board the board
+     * @param blueCount the number of blue disks
+     */
+
     public TiltConfig(int dimensions, char[][] board, int blueCount) {
         this.blueCount = blueCount;
         neighbors = new ArrayList<>();
@@ -37,7 +44,6 @@ public class TiltConfig implements Configuration {
      * The given TiltConfig is a solution if there are no green disks.
      * @return true if the config is a solution, false otherwise
      */
-
     @Override
     public boolean isSolution() {
         for (int row = 0; row < this.DIM; row++) {
@@ -160,7 +166,6 @@ public class TiltConfig implements Configuration {
      * Gives the neighbors of a given config.
      * @return an ArrayList of the neighbors
      */
-
     @Override
     public Collection<Configuration> getNeighbors() {
         if (this.move("east") != null) {
@@ -237,7 +242,6 @@ public class TiltConfig implements Configuration {
      * Represents each TiltConfig as the board.
      * @return the String representation of the TiltConfig
      */
-
     @Override
     public String toString() {
         String result = "";

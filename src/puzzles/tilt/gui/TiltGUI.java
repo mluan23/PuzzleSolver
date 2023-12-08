@@ -17,6 +17,10 @@ import javafx.scene.control.Button;
 
 import java.io.File;
 
+/**
+ * GUI representation of Tilt.
+ */
+
 public class TiltGUI extends Application implements Observer<TiltModel, String> {
     /** The resources directory is located directly underneath the gui package */
     private final static String RESOURCES_DIR = "resources/";
@@ -44,13 +48,13 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     private final double SIZE = 650.0;
     /** the GridPane that represents the game board */
     private GridPane center;
+    /** shortened name of loaded files */
     private String shortFilename;
 
     /**
      * Creates a new model and adds the GUI as an observer. Attempts to load the file given in the
      * command line.
      */
-
     public void init() {
         String filename = getParameters().getRaw().get(0);
         File file = new File(filename);
@@ -285,6 +289,13 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         }
     }
 
+    /**
+     * This method is called when a change is made to the model. Observers are alerted of the change and are updated
+     * to reflect the change.
+     * @param tiltModel the model being observed
+     * @param message the message the model sends to the observers
+     *
+     */
     @Override
     public void update(TiltModel tiltModel, String message) {
         if(message.startsWith(TiltModel.LOADED)){
@@ -327,7 +338,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * Launches the GUI if the correct number of command line arguments are present.
      * @param args [0] the Tilt board filename
      */
-
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java TiltGUI filename");
