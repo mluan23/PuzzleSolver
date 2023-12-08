@@ -46,7 +46,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         while(true){
             String command = scan.nextLine().strip();
             System.out.print("> ");
-            if(command.equalsIgnoreCase("h")){
+            if(command.equalsIgnoreCase("h") || command.equalsIgnoreCase("hint")){
                 model.getHint();
             }
             else if(command.equalsIgnoreCase("q") || command.equalsIgnoreCase("quit")){
@@ -66,13 +66,13 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                             model.loadBoardFile(options[1]);
 
                         } else if (options[1].equalsIgnoreCase("n")) {
-                            model.makeMove("north");
+                            model.tilt("north");
                         } else if (options[1].equalsIgnoreCase("s")) {
-                            model.makeMove("south");
+                            model.tilt("south");
                         } else if (options[1].equalsIgnoreCase("e")) {
-                            model.makeMove("east");
+                            model.tilt("east");
                         } else if (options[1].equalsIgnoreCase("w")) {
-                            model.makeMove("west");
+                            model.tilt("west");
                         } else {
                             System.out.println();
                             help();
