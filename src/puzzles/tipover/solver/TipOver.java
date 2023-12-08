@@ -1,14 +1,10 @@
 package puzzles.tipover.solver;
 
-import puzzles.clock.ClockConfiguration;
 import puzzles.common.solver.Configuration;
 import puzzles.common.solver.Solver;
-import puzzles.tilt.model.TiltConfig;
-import puzzles.tilt.solver.Tilt;
 import puzzles.tipover.model.TipOverConfig;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,9 +12,7 @@ import java.util.List;
 
 /**
  * CSAPX Project 2-2: TipOver Puzzle
- * Using a common BFS solver, solves the TipOver Puzzle.
- *
- * Main class for TipOver Puzzle.
+ * Using the common Solver class, the TiltOver puzzle will be solved with BFS
  *
  * @author Raymond Lee
  */
@@ -37,6 +31,7 @@ public class TipOver {
         try (BufferedReader input = new BufferedReader(new FileReader(file))) {
             String dim = input.readLine();
             String[] dimensions = dim.split("\\s+");
+
             int row = Integer.parseInt(dimensions[0]);
             int col = Integer.parseInt(dimensions[1]);
             int tRow = Integer.parseInt(dimensions[2]);
@@ -44,6 +39,7 @@ public class TipOver {
             int gRow = Integer.parseInt(dimensions[4]);
             int gCol = Integer.parseInt(dimensions[5]);
             char[][] board = new char[row][col];
+
             String line;
             while ((line = input.readLine()) != null) {
                 String[] fields = line.split("\\s+");
@@ -64,10 +60,16 @@ public class TipOver {
         return null;
     }
 
-    public List<Configuration> solveCurrent(TipOverConfig current) {
+    /**
+     * Attempts to create a path for the current config
+     * @param config the current config
+     * @return a path if there is a solution, otherwise it returns an empty list
+     */
+    public List<Configuration> createPath(TipOverConfig config) {
         try {
-            path.addAll(solver.solve(current));
-        } catch (NullPointerException womp) {
+            path.addAll(solver.solve(config));
+        }
+        catch (NullPointerException womp) {
             return null;
         }
         return path;
@@ -78,21 +80,26 @@ public class TipOver {
             System.out.println("Usage: java TipOver filename");
         }
         else {
-            TipOver tip = new TipOver();;
-            TipOverConfig tipCon = tip.readFile(args[0]);
+            TipOver tip = new TipOver();
+            TipOverConfig top = tip.readFile(args[0]);
+
             int move = 0;
+
             System.out.println("File: " + args[0]);
-            System.out.println(tipCon);
-            if (tip.solveCurrent(tipCon) == null) {
+            System.out.println(top);
+
+            if (tip.createPath(top) == null) {
                 System.out.println("Total configs: " + tip.solver.getTotal());
                 System.out.println("Unique configs: " + tip.solver.getUnique());
                 System.out.println("No solution");
-            } else {
+            }
+            else {
                 System.out.println("Total configs: " + tip.solver.getTotal());
                 System.out.println("Unique configs: " + tip.solver.getUnique());
                 if (tip.path.get(0) == null) {
-                    System.out.println("Step " + move + ": \n" + tipCon);
-                } else {
+                    System.out.println("Step " + move + ": \n" + top);
+                }
+                else {
                     for (Configuration steps : tip.path) {
                         System.out.println("Step " + move + ": \n" + steps + "\n");
                         move++;
