@@ -138,7 +138,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * primary stages.
      * @throws Exception if there is trouble creating something
      */
-
     @Override
     public void start(Stage stage) throws Exception {
         BorderPane outer = new BorderPane();
@@ -294,7 +293,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * to reflect the change.
      * @param tiltModel the model being observed
      * @param message the message the model sends to the observers
-     *
      */
     @Override
     public void update(TiltModel tiltModel, String message) {

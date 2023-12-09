@@ -2,7 +2,6 @@ package puzzles.tilt.model;
 
 import puzzles.common.Observer;
 import puzzles.common.solver.Configuration;
-import puzzles.common.solver.Solver;
 import puzzles.tilt.solver.Tilt;
 
 import java.io.*;
@@ -126,7 +125,6 @@ public class TiltModel {
             alertObservers(LOAD_FAILED + file);
         }
     }
-
 
     /**
      * Allows the user to tilt the board in one of four directions.
