@@ -277,7 +277,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         fileChooser.setTitle("Load a game board");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")+"/data/tilt"));
         fileChooser.getExtensionFilters().addAll
-                (new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.lob"));
+                (new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(stage);
         String shortenedFilename = selectedFile.getAbsolutePath().substring
                 (selectedFile.getAbsolutePath().lastIndexOf(File.separator) + 1);
