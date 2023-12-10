@@ -89,13 +89,13 @@ public class TipOver {
             System.out.println(top);
 
             if (tip.createPath(top) == null) {
-                System.out.println("Total configs: " + tip.solver.getTotal());
-                System.out.println("Unique configs: " + tip.solver.getUnique());
-                System.out.println("No solution");
+                System.out.println("Total configs: " + tip.solver.getTotal() +
+                        "\nUnique configs: " + tip.solver.getUnique() +
+                        "\nNo solution");
             }
             else {
-                System.out.println("Total configs: " + tip.solver.getTotal());
-                System.out.println("Unique configs: " + tip.solver.getUnique());
+                System.out.println("Total configs: " + tip.solver.getTotal() +
+                        "\nUnique configs: " + tip.solver.getUnique());
                 if (tip.path.get(0) == null) {
                     System.out.println("Step " + move + ": \n" + top);
                 }
