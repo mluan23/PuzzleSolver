@@ -25,7 +25,6 @@ public class TiltConfig implements Configuration {
      * @param board the board
      * @param blueCount the number of blue disks
      */
-
     public TiltConfig(int dimensions, char[][] board, int blueCount) {
         this.blueCount = blueCount;
         neighbors = new ArrayList<>();
@@ -153,6 +152,7 @@ public class TiltConfig implements Configuration {
         this.reset();
         return null;
     }
+
     /**
      * Creates a copy array using the original config.
      */

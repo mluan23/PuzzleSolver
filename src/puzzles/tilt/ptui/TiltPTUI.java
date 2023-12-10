@@ -1,10 +1,8 @@
 package puzzles.tilt.ptui;
 
 import puzzles.common.Observer;
-import puzzles.tilt.model.TiltConfig;
 import puzzles.tilt.model.TiltModel;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -16,6 +14,10 @@ public class TiltPTUI implements Observer<TiltModel, String> {
     private TiltModel model;
     /** allows for user input */
     private Scanner scan;
+
+    /**
+     * Constructor for TiltPTUI. Creates a new model and adds the PTUI as an observer.
+     */
     public TiltPTUI(){
         model = new TiltModel();
         model.addObserver(this);
@@ -46,7 +48,7 @@ public class TiltPTUI implements Observer<TiltModel, String> {
         while(true){
             String command = scan.nextLine().strip();
             System.out.print("> ");
-            if(command.equalsIgnoreCase("h")){
+            if(command.equalsIgnoreCase("h") || command.equalsIgnoreCase("hint")){
                 model.getHint();
             }
             else if(command.equalsIgnoreCase("q") || command.equalsIgnoreCase("quit")){
@@ -61,26 +63,25 @@ public class TiltPTUI implements Observer<TiltModel, String> {
                     help();
                 }
                 else {
-                        if (options[0].equalsIgnoreCase("l") ||
-                                command.equalsIgnoreCase("load")) {
-                            model.loadBoardFile(options[1]);
-
-                        } else if (options[1].equalsIgnoreCase("n")) {
-                            model.makeMove("north");
-                        } else if (options[1].equalsIgnoreCase("s")) {
-                            model.makeMove("south");
-                        } else if (options[1].equalsIgnoreCase("e")) {
-                            model.makeMove("east");
-                        } else if (options[1].equalsIgnoreCase("w")) {
-                            model.makeMove("west");
-                        } else {
-                            System.out.println();
-                            help();
-                        }
+                    if (options[0].equalsIgnoreCase("l") ||
+                            command.equalsIgnoreCase("load")) {
+                        model.loadBoardFile(options[1]);
+                    } else if (options[1].equalsIgnoreCase("n")) {
+                        model.tilt("north");
+                    } else if (options[1].equalsIgnoreCase("s")) {
+                        model.tilt("south");
+                    } else if (options[1].equalsIgnoreCase("e")) {
+                        model.tilt("east");
+                    } else if (options[1].equalsIgnoreCase("w")) {
+                        model.tilt("west");
+                    } else {
+                        System.out.println();
+                        help();
                     }
                 }
             }
         }
+    }
 
     /**
      * This method is called when a change is made to the model. Observers are alerted of the change and are updated

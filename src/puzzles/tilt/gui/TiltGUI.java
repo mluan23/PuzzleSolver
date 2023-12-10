@@ -74,7 +74,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
         Button arrow = new Button(symbol);
         arrow.setOnAction(event -> {
             if(!model.gameOver()) {
-                model.makeMove(direction);
+                model.tilt(direction);
                 setBoard();
             }
         });
@@ -138,7 +138,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * primary stages.
      * @throws Exception if there is trouble creating something
      */
-
     @Override
     public void start(Stage stage) throws Exception {
         BorderPane outer = new BorderPane();
@@ -201,7 +200,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
     /**
      * Creates the center GridPane that represents the game board.
      */
-    public void makeBoard() {
+    private void makeBoard() {
         center = new GridPane();
         center.setAlignment(Pos.CENTER);
         center.setVgap(25.0/dimensions);
@@ -259,7 +258,7 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * Used to load in game boards.
      * @param file the file to be read
      */
-    public void loadFile(File file){
+    private void loadFile(File file){
         String shortenedFilename = file.getAbsolutePath().substring
                 (file.getAbsolutePath().lastIndexOf(File.separator)+1);
         shortFilename = shortenedFilename;
@@ -273,12 +272,12 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * Allows the user to choose a game board to be loaded in.
      * @param stage the stage in which the file choosing is shown
      */
-    public void chooseFile(Stage stage){
+    private void chooseFile(Stage stage){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load a game board");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")+"/data/tilt"));
         fileChooser.getExtensionFilters().addAll
-                (new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.lob"));
+                (new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(stage);
         String shortenedFilename = selectedFile.getAbsolutePath().substring
                 (selectedFile.getAbsolutePath().lastIndexOf(File.separator) + 1);
@@ -294,7 +293,6 @@ public class TiltGUI extends Application implements Observer<TiltModel, String> 
      * to reflect the change.
      * @param tiltModel the model being observed
      * @param message the message the model sends to the observers
-     *
      */
     @Override
     public void update(TiltModel tiltModel, String message) {

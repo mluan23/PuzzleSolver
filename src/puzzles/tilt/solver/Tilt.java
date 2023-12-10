@@ -53,7 +53,6 @@ public class Tilt {
      * @return the starting TiltConfig based on the file, if the file is valid; returns null if
      * the file is not valid
      */
-
     public TiltConfig readFile(String filename) {
         try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
             int blueCount = 0;
