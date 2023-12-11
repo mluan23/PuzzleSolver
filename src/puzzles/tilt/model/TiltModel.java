@@ -133,18 +133,18 @@ public class TiltModel {
     public void tilt(String direction){
         TiltConfig move = currentConfig;
         if(direction.equals("north")){
-            move = currentConfig.move("north");
+            move = currentConfig.tilt("north");
         } else if (direction.equals("south")) {
-            move = currentConfig.move("south");
+            move = currentConfig.tilt("south");
 
         }  else if (direction.equals("east")) {
-            move = currentConfig.move("east");
+            move = currentConfig.tilt("east");
 
         }  else if (direction.equals("west")) {
-            move = currentConfig.move("west");
+            move = currentConfig.tilt("west");
         }
         if(move!=null) {
-            if(!gameOver()) {
+            if(!gameOver()) { // user's moves will not affect board after it has been solved
                 currentConfig = move;
             }
             alertObservers(MOVE);

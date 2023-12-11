@@ -61,7 +61,7 @@ public class TiltConfig implements Configuration {
      * @param direction the direction to tilt the board
      * @return the config for the direction the board was tilted in or null if the move is illegal
      */
-    public TiltConfig move(String direction){
+    public TiltConfig tilt(String direction){
         int rows;
         int cols;
         if(direction.equals("north")) {
@@ -168,17 +168,17 @@ public class TiltConfig implements Configuration {
      */
     @Override
     public Collection<Configuration> getNeighbors() {
-        if (this.move("east") != null) {
-            neighbors.add(this.move("east"));
+        if (this.tilt("east") != null) {
+            neighbors.add(this.tilt("east"));
         }
-        if (this.move("south") != null) {
-            neighbors.add(this.move("south"));
+        if (this.tilt("south") != null) {
+            neighbors.add(this.tilt("south"));
         }
-        if (this.move("north") != null) {
-            neighbors.add(this.move("north"));
+        if (this.tilt("north") != null) {
+            neighbors.add(this.tilt("north"));
         }
-        if (this.move("west") != null) {
-            neighbors.add(this.move("west"));
+        if (this.tilt("west") != null) {
+            neighbors.add(this.tilt("west"));
         }
         return neighbors;
     }
