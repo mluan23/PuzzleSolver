@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * CSAPX Project 2-2: TipOver Puzzle
+ * CS-APX Project 2-2: TipOver Puzzle
  * Using the common Solver class, the TiltOver puzzle will be solved with BFS
  *
  * @author Raymond Lee
@@ -63,7 +63,7 @@ public class TipOver {
     /**
      * Attempts to create a path for the current config
      * @param config the current config
-     * @return a path if there is a solution, otherwise it returns an empty list
+     * @return A path if there is a solution, otherwise it returns an empty list
      */
     public List<Configuration> createPath(TipOverConfig config) {
         try {
