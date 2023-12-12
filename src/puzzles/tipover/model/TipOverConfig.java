@@ -35,10 +35,12 @@ public class TipOverConfig implements Configuration {
 
         this.neighbors = new ArrayList<>();
         this.board = new char[ROW][COL];
+        this.copy = new char[ROW][COL];
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
                 char value = board[r][c];
                 this.board[r][c] = value;
+                this.copy[r][c] = value;
             }
         }
     }
@@ -158,8 +160,12 @@ public class TipOverConfig implements Configuration {
 
         switch (direction) {
             case "North" -> {
-                int tower = this.board[row][col];
+                int tower = this.board[row][col] - '0';
                 int counter = 0;
+
+                if (tower < 2) {
+                    return null;
+                }
 
                 if (row - tower >= 0) {
                     for (int i = 1; i <= tower; i++) {
@@ -177,19 +183,23 @@ public class TipOverConfig implements Configuration {
                     row -= 1;
                 }
                 else {
-                    break;
+                    return null;
                 }
 
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
+                this.resetBoard();
                 return neighbor;
 
             }
             case "East" -> {
-                int tower = this.board[row][col];
+                int tower = this.board[row][col] - '0';
                 int counter = 0;
 
-                if (col - tower >= 0) {
+                if (tower < 2) {
+                    return null;
+                }
+
+                if (col + tower < COL) {
                     for (int i = 1; i <= tower; i++) {
                         counter++;
                         if (board[row][col + i] != '0') {
@@ -205,15 +215,19 @@ public class TipOverConfig implements Configuration {
                     col += 1;
                 }
                 else {
-                    break;
+                    return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
+                this.resetBoard();
                 return neighbor;
             }
             case "South" -> {
-                int tower = this.board[row][col];
+                int tower = this.board[row][col] - '0';
                 int counter = 0;
+
+                if (tower < 2) {
+                    return null;
+                }
 
                 if (row + tower < ROW) {
                     for (int i = 1; i <= tower; i++) {
@@ -231,17 +245,21 @@ public class TipOverConfig implements Configuration {
                     row += 1;
                 }
                 else {
-                    break;
+                    return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
+                this.resetBoard();
                 return neighbor;
             }
             case "West" -> {
-                int tower = this.board[row][col];
+                int tower = this.board[row][col] - '0';
                 int counter = 0;
 
-                if (col + tower < COL) {
+                if (tower < 2) {
+                    return null;
+                }
+
+                if (col - tower >= 0) {
                     for (int i = 1; i <= tower; i++) {
                         counter++;
                         if (board[row][col - i] != '0') {
@@ -256,10 +274,10 @@ public class TipOverConfig implements Configuration {
                     board[row][col] = '0';
                     col -= 1;
                 } else {
-                    break;
+                    return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
+                this.resetBoard();
                 return neighbor;
             }
         }
