@@ -213,7 +213,7 @@ public class TipOverModel {
      * Resets the current board to be like the copy board (which hold its original value)
      */
     public void reset() {
-        copyConfig = currentConfig;
+        currentConfig = copyConfig;
         alertObservers(RESET);
     }
 }
