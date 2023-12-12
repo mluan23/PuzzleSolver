@@ -114,7 +114,6 @@ public class TipOverConfig implements Configuration {
                     return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
                 return neighbor;
             }
             case "East" -> {
@@ -125,7 +124,6 @@ public class TipOverConfig implements Configuration {
                     return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
                 return neighbor;
             }
             case "South" -> {
@@ -136,7 +134,6 @@ public class TipOverConfig implements Configuration {
                     return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
                 return neighbor;
             }
             case "West" -> {
@@ -147,7 +144,6 @@ public class TipOverConfig implements Configuration {
                     return null;
                 }
                 TipOverConfig neighbor = new TipOverConfig(ROW, COL, board, row, col, goalRow, goalCol);
-                //this.resetBoard();
                 return neighbor;
             }
         }
