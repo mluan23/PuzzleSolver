@@ -41,14 +41,18 @@ public class TipOver {
             char[][] board = new char[row][col];
 
             String line;
-            while ((line = input.readLine()) != null) {
+            int r = 0;
+            while (r < row) {
+                line = input.readLine();
                 String[] fields = line.split("\\s+");
-                for (int r = 0; r < row; r++) {
-                    for (int c = 0; c < col; c++) {
-                        board[r][c] = fields[c].charAt(0);
-                    }
+
+                for (int c = 0; c < col; c++) {
+                    board[r][c] = fields[c].charAt(0);
                 }
+
+                r++;
             }
+
             // should create a new TipOverConfig that takes in the dimensions, the board,
             // the starting location, and the goal location
             return new TipOverConfig(row, col, board, tRow, tCol, gRow, gCol);
